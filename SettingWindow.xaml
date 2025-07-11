@@ -6,11 +6,48 @@
         xmlns:local="clr-namespace:xiaochao" 
         mc:Ignorable="d"
         x:Name="Setting"
-        Title="设置" Height="450" Width="800">
-    
-    <Grid>
-        <Button Template="{StaticResource button_style}" Width="70" Height="30" Content="确定" Background="{Binding ElementName=Setting,  Path=Config.Decoration_color}" HorizontalAlignment="Left" Margin="126,165,0,0" VerticalAlignment="Top"/>
-        <Button Template="{StaticResource button_style}" Width="70" Height="30" Content="取消" Background="{Binding ElementName=Setting,  Path=Config.Decoration_color}" HorizontalAlignment="Left" Margin="126,217,0,0" VerticalAlignment="Top"/>
+        Title="設定" Height="450" Width="800">
 
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ComboBox 放第一行 -->
+        <ComboBox x:Name="ThemeSelector"
+              Style="{x:Null}"
+              Grid.Row="0"
+              Margin="90,5,479,11"
+              SelectionChanged="ThemeSelector_SelectionChanged">
+            <ComboBoxItem Content="番茄"/>
+            <ComboBoxItem Content="白色"/>
+            <ComboBoxItem Content="黑色"/>
+            <ComboBoxItem Content="灰色"/>
+            <ComboBoxItem Content="自訂"/>
+        </ComboBox>
+
+        <!-- 確定按鈕 -->
+        <Button Grid.Row="2"
+            Template="{StaticResource button_style}"
+            Width="70" Height="30"
+            Content="確定"
+            Background="{Binding Config.Decoration_color}"
+            HorizontalAlignment="Left"
+            Margin="557,10,0,10"
+            Click="Confirm_Click" />
+
+        <!-- 取消按鈕 -->
+        <Button Grid.Row="2"
+            Template="{StaticResource button_style}"
+            Width="70" Height="30"
+            Content="取消"
+            Background="{Binding Config.Decoration_color}"
+            HorizontalAlignment="Left"
+            Margin="642,10,0,10"
+            Click="Cancel_Click" />
+        <Label Content="主題" HorizontalAlignment="Left" Margin="34,3,0,0" VerticalAlignment="Top"/>
     </Grid>
+
 </Window>
