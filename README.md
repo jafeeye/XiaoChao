@@ -76,6 +76,7 @@ https://github.com/chenjing1294/LittleTips
 https://github.com/telppa/KMCounter  
 https://github.com/HaujetZhao/ShortcutMapper_Chinese  
 https://github.com/JinSooo/CheatSheet  
+https://github.com/ayangweb/BongoCat  
 https://www.azofreeware.com/2020/06/lct.html  
 
 
