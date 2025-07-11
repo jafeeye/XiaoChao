@@ -19,7 +19,7 @@
 - [ ] 下拉選單顯示原軟體名稱
 - [ ] 執行 bongo-cat 按鈕
 - [ ] 顯示目前快速鍵按鈕
-- [ ] 新增不同按鈕樣式 來自 [pluvetoShortcutMap](https://github.com/pluveto/ShortcutMap?tab=readme-ov-file)
+- [ ] 新增不同按鈕樣式 創意來自 [pluvetoShortcutMap](https://github.com/pluveto/ShortcutMap?tab=readme-ov-file)
 
 ## 如何深度使用
 
