@@ -79,4 +79,7 @@ https://github.com/JinSooo/CheatSheet
 https://github.com/ayangweb/BongoCat  
 https://www.azofreeware.com/2020/06/lct.html  
 
-
+## 相關軟體
+Auohotkey 
+ComfortKey
+Anasoft Keymanager
