@@ -80,4 +80,4 @@ https://www.azofreeware.com/2020/06/lct.html
 ## 相關軟體
 - AutoHotKey   
 - ComfortKey  
-- Anasoft Keymanager
+- ATNSOFT Keymanager
