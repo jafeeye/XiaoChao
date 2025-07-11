@@ -1,7 +1,7 @@
 <p align="center">
  <img width="100px" src="https://raw.githubusercontent.com/BetterWorld-Liuser/XiaoChao/master/resources/document.ico" align="center" alt="XiaoChao" />
  <h2 align="center">XiaoChao</h2>
- <p align="center">根据使用的应用提示快捷键</p>
+ <p align="center">根據使用的應用提示快捷鍵</p>
 </p>
 
 
@@ -19,7 +19,7 @@
 - [ ] 下拉選單顯示原軟體名稱
 - [ ] 執行 bongo-cat 按鈕
 - [ ] 顯示目前快速鍵按鈕
-- [ ] 新增不同按鈕樣式
+- [ ] 新增不同按鈕樣式 來自
 
 ## 如何深度使用
 
@@ -46,12 +46,6 @@ https://www.bilibili.com/video/BV13S4y1C7Ui?share_source=copy_web
 
 https://github.com/BetterWorld-Liuser/XiaoChao
 
-
-## 已知缺陷
-
-- 安装新版时, 请备份你的 data 文件夹, 预置的快捷键可能会覆盖原先的快捷键.
-- 安装新版时，请备份你的设置文件，可能会覆盖旧的设置文件。
-- 声明一下，我想把“快捷键助手”做成一个系统插件形式的软件，所以在系统托盘里目前不计划有图标显示（除非你们都在骂）。
 
 ## 捐赠
 
