@@ -1,0 +1,30 @@
+{
+  "app": "notepad",
+  "moduleName": "^notepad\\.exe$",
+  "author": "pluveto",
+  "version": "1.0",
+  "description": "Shortcuts for Blender",
+  "groups": [
+    {
+      "name": "Window",
+      "shortcuts": [
+        { "keys": ["Ctrl", "Left"], "action": "Arrow Go to Previous Screen" },
+        { "keys": ["Ctrl", "Right"], "action": "Arrow Go to Next Screen" },
+        { "keys": ["Ctrl", "Up"], "action": "Arrow Maximize Window" },
+        {
+          "keys": ["Ctrl", "Down"],
+          "action": "Arrow Retrun to Previous Window Size"
+        },
+        { "keys": ["Shift", "F4"], "action": "Data View" },
+        { "keys": ["Shift", "F5"], "action": "3D Window" },
+        { "keys": ["Shift", "F6"], "action": "IPO Window" },
+        { "keys": ["Shift", "F7"], "action": "Buttons Window" },
+        { "keys": ["Shift", "F8"], "action": "Sequence Window" },
+        { "keys": ["Shift", "F9"], "action": "Outliner Window" },
+        { "keys": ["Shift", "F10"], "action": "Image Window" },
+        { "keys": ["Shift", "F11"], "action": "Text Window" },
+        { "keys": ["Shift", "F12"], "action": "Action Window" }
+      ]
+    }
+  ]
+}
