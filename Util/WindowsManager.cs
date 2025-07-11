@@ -1,89 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// --- START OF WindowsManager.cs (MODIFIED) ---
+using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using static PInvoke.User32;
 
-namespace xiaochao
+// 我將命名空間改為 xiaochao.Util，這是一個好習慣。
+// 如果您想保持原樣，可以改回 namespace xiaochao
+namespace xiaochao.Util
 {
-    internal class WindowsManager
+    // 將類別設為 public static，因為裡面的方法都是靜態的
+    public static class WindowsManager
     {
-
-
-
-        //-------------------------- 外部定义 ---------------------------------
-        
         /// <summary>
-        /// 获取window的标题
+        /// 获取当前前台窗口的标题
         /// </summary>
-        /// <param name="hWnd"></param>
-        /// <param name="text"></param>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern uint GetWindowModuleFileName(IntPtr hwnd, StringBuilder lpszFileName, uint cchFileNameMax);
-
-
-        //------------------------- 静态方法 ----------------------
-
-        /// <summary>
-        /// 获取窗口的标题
-        /// </summary>
-        /// <returns></returns>
         public static string GetFrontWindowText()
         {
-            IntPtr hWnd = GetForegroundWindow();
+            IntPtr hWnd = NativeMethods.GetForegroundWindow();
             return GetTitle(hWnd);
         }
+
         /// <summary>
-        /// 获取hWnd
+        /// 获取当前前台窗口的句柄 (Handle)
         /// </summary>
-        /// <returns></returns>
         public static IntPtr GethWnd()
         {
-            return GetForegroundWindow();
+            return NativeMethods.GetForegroundWindow();
         }
-        
 
         /// <summary>
-        /// 获取窗口归属的exe
+        /// 获取当前前台窗口归属进程的完整路径
         /// </summary>
-        /// <param name="hwnd"></param>
-        /// <returns></returns>
+        /// <returns>例如 "C:\Windows\System32\notepad.exe"</returns>
         public static string GetWindowProcessName()
         {
-            IntPtr hwnd = GetForegroundWindow();
-            GetWindowThreadProcessId(hwnd, out int pid);
-            Process p = Process.GetProcessById((int)pid);
-            return p.ProcessName;
-        }
+            try
+            {
+                IntPtr hWnd = NativeMethods.GetForegroundWindow();
+                if (hWnd == IntPtr.Zero) return null;
 
+                NativeMethods.GetWindowThreadProcessId(hWnd, out uint processId);
+                if (processId == 0) return null;
+
+                // 嘗試使用新方法獲取完整路徑，這在處理 UWP 應用或高權限應用時更可靠
+                // PROCESS_QUERY_LIMITED_INFORMATION (0x1000)
+                IntPtr hProcess = NativeMethods.OpenProcess(0x1000, false, processId);
+                if (hProcess != IntPtr.Zero)
+                {
+                    try
+                    {
+                        int capacity = 2048;
+                        StringBuilder sb = new StringBuilder(capacity);
+                        if (NativeMethods.QueryFullProcessImageName(hProcess, 0, sb, ref capacity))
+                        {
+                            return sb.ToString();
+                        }
+                    }
+                    finally
+                    {
+                        NativeMethods.CloseHandle(hProcess);
+                    }
+                }
+
+                // 如果新方法失敗，回退到使用 System.Diagnostics.Process 的傳統方法
+                // 這對大多數標準桌面應用有效
+                Process p = Process.GetProcessById((int)processId);
+                return p?.MainModule?.FileName;
+            }
+            catch (Exception)
+            {
+                // 捕獲所有可能的異常（例如權限不足無法訪問 MainModule）
+                return null;
+            }
+        }
 
         /// <summary>
         /// 将对应名称的窗口放置在前台
         /// </summary>
-        /// <param name="windowName"></param>
-        /// <returns></returns>
         public static bool Set_window_frontByName(string windowName)
         {
-            return SetForegroundWindow(FindWindow(null, windowName));
+            IntPtr hWnd = NativeMethods.FindWindow(null, windowName);
+            return NativeMethods.SetForegroundWindow(hWnd);
         }
 
-
-        public static string GetTitle(IntPtr handle)
+        /// <summary>
+        /// 根据句柄获取窗口标题
+        /// </summary>
+        private static string GetTitle(IntPtr handle)
         {
-            string windowText = "";
-            int nChars = GetWindowTextLength(handle);
-            char[] Buff = new char[nChars];
-            if (GetWindowText(handle, Buff, nChars+1) > 0)
+            if (handle == IntPtr.Zero) return "";
+
+            int nChars = NativeMethods.GetWindowTextLength(handle);
+            if (nChars == 0) return "";
+
+            StringBuilder Buff = new StringBuilder(nChars + 1);
+            if (NativeMethods.GetWindowText(handle, Buff, Buff.Capacity) > 0)
             {
-                windowText = new string(Buff);
+                return Buff.ToString();
             }
-            return windowText;
+            return "";
         }
     }
 }
+// --- END OF WindowsManager.cs (MODIFIED) ---

@@ -21,6 +21,9 @@ namespace xiaochao
         public string Decoration_color { get; set; } = "#c9cdd4";
         public double Background_opacity { get; set; } = 0.9;
 
+        public int Column_count { get; set; } = 3; // 預設顯示 3 欄
+
+
         public int Font_size { get; set; } = 15;
         public int Font_size_Title_in_assemble {
             get => Font_size + 4;
@@ -34,6 +37,10 @@ namespace xiaochao
         {
             get => Font_size - 7 ;
         }
+
+        public int Window_Height { get; set; } = 750;
+
+        public int Window_Width { get; set; } = 1200;
 
         #region ConfigManager初始化函数
         private ConfigManager()
@@ -90,13 +97,13 @@ namespace xiaochao
         {
             //设置开机启动
             
-            if (config_dictionary.TryGetValue("开机启动", out string start_up))
+            if (config_dictionary.TryGetValue("開機啟動", out string start_up))
             {
                 if (start_up == "否") Start_Up = false;
             }
 
             //设置快捷键
-            if (config_dictionary.TryGetValue("快捷键", out string shortcut)) Shortcut = shortcut;
+            if (config_dictionary.TryGetValue("快捷鍵", out string shortcut)) Shortcut = shortcut;
 
 
             //设置背景色
@@ -110,18 +117,64 @@ namespace xiaochao
             }
 
             //设置字体颜色
-            if (config_dictionary.TryGetValue("字体颜色", out string font_color)) Font_color = font_color;
+            if (config_dictionary.TryGetValue("字體顏色", out string font_color)) Font_color = font_color;
 
             //设置装饰色
-            if (config_dictionary.TryGetValue("装饰色", out string decorationcolor)) Decoration_color = decorationcolor;
+            if (config_dictionary.TryGetValue("裝飾色", out string decorationcolor)) Decoration_color = decorationcolor;
 
             //设置基准大小
-            if (config_dictionary.TryGetValue("基准大小", out string basesize))
+            if (config_dictionary.TryGetValue("基準大小", out string basesize))
             {
                 Font_size = int.Parse(basesize);
             }
 
+            //設定顯示欄數
+            if (config_dictionary.TryGetValue("顯示欄數", out string columnStr))
+            {
+                if (int.TryParse(columnStr, out int count) && count >= 1 && count <= 10)
+                {
+                    Column_count = count;
+                }
+            }
+
+            if (config_dictionary.TryGetValue("視窗高度", out string heightStr))
+            {
+                if (int.TryParse(heightStr, out int h) && h >= 200)
+                {
+                    Window_Height = h;
+                }
+            }
+
+            if (config_dictionary.TryGetValue("視窗寬度", out string widthStr))
+            {
+                if (int.TryParse(widthStr, out int w) && w >= 200)
+                {
+                    Window_Width = w;
+                }
+            }
+
         }
+
+        public void SaveConfig()
+        {
+            var lines = new List<string>
+        {
+            $"快捷鍵 {Shortcut}",
+            $"背景色 {Background_color}",
+            $"透明度 {(int)(Background_opacity * 100)}",
+            $"字體顏色 {Font_color}",
+            $"裝飾色 {Decoration_color}",
+            $"基準大小 {Font_size}",
+            $"顯示欄數 {Column_count}",
+            $"視窗高度 {Window_Height}",
+            $"視窗寬度 {Window_Width}"
+        };
+            File.WriteAllLines(Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "设置.md"), lines);
+        }
+
+
+
+
 
     }
 }
