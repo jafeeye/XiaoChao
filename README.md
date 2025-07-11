@@ -6,7 +6,7 @@
 
 
 
-![alt text](圖片.png)
+![(圖片.png)](https://raw.githubusercontent.com/jafeeye/XiaoChao/refs/heads/master/picture/%E5%9C%96%E7%89%87.png)
 
 
 ## 根據原作者修復缺陷及新功能
