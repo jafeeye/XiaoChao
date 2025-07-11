@@ -39,9 +39,7 @@
 - 視窗高度 750
 - 視窗寬度 1200
 
-## 视频教程
 
-https://www.bilibili.com/video/BV13S4y1C7Ui?share_source=copy_web
 
 ## 开源地址：
 
