@@ -72,10 +72,10 @@ https://github.com/BetterWorld-Liuser/XiaoChao
 
 
 ## 相關專案
-https://github.com/chenjing1294/LittleTips
-https://github.com/telppa/KMCounter
-https://github.com/HaujetZhao/ShortcutMapper_Chinese
-https://github.com/JinSooo/CheatSheet
-https://www.azofreeware.com/2020/06/lct.html
+https://github.com/chenjing1294/LittleTips  
+https://github.com/telppa/KMCounter  
+https://github.com/HaujetZhao/ShortcutMapper_Chinese  
+https://github.com/JinSooo/CheatSheet  
+https://www.azofreeware.com/2020/06/lct.html  
 
 
