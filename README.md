@@ -25,7 +25,7 @@
 - [ ] 錄入快速鍵
 - [ ] 新增不同按鈕樣式 創意來自 [pluvetoShortcutMap](https://github.com/pluveto/ShortcutMap?tab=readme-ov-file)
 
-## 如何深度使用
+## 調整設置
 
 目前支持的設置選項如下
 
