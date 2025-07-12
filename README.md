@@ -23,7 +23,7 @@
 - [x] 打字測速
 - [ ] 完善Tooltip
 - [ ] 錄入快速鍵
-- [ ] 新增不同按鈕樣式 創意來自 [pluvetoShortcutMap](https://github.com/pluveto/ShortcutMap?tab=readme-ov-file)
+- [ ] 新增按鈕樣式 [pluvetoShortcutMap](https://github.com/pluveto/ShortcutMap?tab=readme-ov-file)
 
 ## 調整設置
 
