@@ -23,6 +23,7 @@
 - [ ] 打字測速
 - [ ] 完善Tooltip
 - [ ] 錄入快速鍵
+- [ ] 打字練習軟體
 - [ ] 新增不同按鈕樣式 創意來自 [pluvetoShortcutMap](https://github.com/pluveto/ShortcutMap?tab=readme-ov-file)
 
 ## 如何深度使用
