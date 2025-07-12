@@ -17,13 +17,12 @@
 - [x] 增加設置.md 設置項
 - [x] 新增鈕隨意修改
 - [ ] 下拉選單顯示軟體名稱
-- [ ] 執行 bongo-cat 鍵盤貓按鈕
-- [ ] 顯示目前快速鍵按鈕
-- [ ] 鍵盤熱力圖
-- [ ] 打字測速
+- [x] 執行 bongo-cat 鍵盤貓按鈕
+- [x] 顯示目前快速鍵按鈕
+- [x] 鍵盤熱力圖
+- [x] 打字測速
 - [ ] 完善Tooltip
-- [ ] 錄入快速鍵
-- [ ] 打字練習軟體
+- [?] 錄入快速鍵
 - [ ] 新增不同按鈕樣式 創意來自 [pluvetoShortcutMap](https://github.com/pluveto/ShortcutMap?tab=readme-ov-file)
 
 ## 如何深度使用
