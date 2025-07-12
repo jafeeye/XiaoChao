@@ -9,7 +9,7 @@
 ![(圖片.png)](https://raw.githubusercontent.com/jafeeye/XiaoChao/refs/heads/master/picture/%E5%9C%96%E7%89%87.png)
 
 
-## 根據原作者修復缺陷及新功能
+## 新功能和修Bug
 - [x] 修復開機啟動為否異常退出
 - [x] 修復註冊快速鍵，可隨意註冊F1,F2...
 - [x] 調整佈景主題(在SettingWindow.xaml)
