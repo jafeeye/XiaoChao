@@ -185,12 +185,12 @@ namespace xiaochao
         private readonly string _sub_directory = Path.Combine(BaseDir, "data");
         private readonly string _local_directory = Path.Combine(BaseDir, "local");
         private static WindowHooker _hooker;
-        public ConfigManager ConfigManagerInstance { get; set; } = ConfigManager.GetInstance();
+        public ConfigManager ConfigManagerInstance { get; set; } = ConfigManager.GetInstance(); // 獲取ConfigManager配置值
         public int Normal_data_height { get; set; } = 27;
         public int Bigtitle_data_height { get; set; } = 30;
-        public int Column_count { get; set; } = 4; // 修改欄位
-        public int Window_Height { get; set; } = 750; //修改高度
-        public int Window_Width { get; set; } = 1200;
+        public int Column_count { get; set; } = 4; // 讀入md快速鍵幾欄顯示
+        public int Window_Height { get; set; } = 750; //視窗高度
+        public int Window_Width { get; set; } = 1200; //視窗寬度
         public int Column_Width { get; set; }
         public int Colum_Item_Width { get; set; }
         public string Version { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -468,6 +468,83 @@ namespace xiaochao
                 Activate();
                 Focus();
             }
+        }
+
+
+        private void MenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as System.Windows.Controls.Button;
+            if (button != null && button.ContextMenu != null)
+            {
+                // 設定選單的位置在按鈕下方
+                button.ContextMenu.PlacementTarget = button;
+                button.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Top;
+
+                // 打開選單
+                button.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private void Typewriter_Click(object sender, RoutedEventArgs e)
+        {
+            // 這裡放入 "打字機" 功能的程式碼
+            // 目前先用一個訊息框作為範例
+            System.Windows.MessageBox.Show("您點擊了 '打字機' 功能！");
+        }
+
+        private void ShowHotkeys_Click(object sender, RoutedEventArgs e)
+        {
+            // 這裡放入 "快速鍵顯示" 功能的程式碼
+            // 目前先用一個訊息框作為範例
+            System.Windows.MessageBox.Show("您點擊了 '快速鍵顯示' 功能！");
+        }
+
+        private void ShowBongoCat_Click(object sender, RoutedEventArgs e)
+        {
+            // 這裡放入 "快速鍵顯示" 功能的程式碼
+            // 目前先用一個訊息框作為範例
+            System.Windows.MessageBox.Show("您點擊了 '快速鍵顯示' 功能！");
+        }
+
+
+        //這個方法有點投機，之後有別的方法再重寫
+        
+        private void Restart_Click(object sender, RoutedEventArgs e)
+        {
+            //重啟方法為找目前執行檔的路徑，然後啟動一個新的實例，最後關閉當前實例。
+            try
+            {
+                // 1. 獲取當前應用程式執行檔的完整路徑
+                string exePath = System.Windows.Application.ResourceAssembly.Location;
+
+                // 進行安全檢查，雖然 exePath 幾乎不可能為空
+                if (string.IsNullOrEmpty(exePath))
+                {
+                    System.Windows.MessageBox.Show("無法獲取應用程式路徑，重啟失敗。");
+                    return;
+                }
+
+                // 2. 啟動一個新的應用程式實例
+                // 使用 ProcessStartInfo 是更現代且推薦的做法
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(exePath)
+                {
+                    UseShellExecute = true
+                });
+
+                // 3. 關閉當前的應用程式實例
+                System.Windows.Application.Current.Shutdown();
+            }
+            catch (System.Exception ex)
+            {
+                // 如果發生任何錯誤，顯示錯誤訊息
+                System.Windows.MessageBox.Show($"重啟應用程式時發生錯誤: {ex.Message}");
+            }
+
+        }
+
+        private void Conf_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("Explorer.exe", Path.Combine(BaseDir, "设置.md"));
         }
 
         // (新) ComboBox 選擇變更事件

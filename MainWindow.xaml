@@ -18,8 +18,8 @@
         Deactivated="Main_Deactivated"
         Topmost="True"
         >
+    <!--Window.Res可自訂各種按鈕外觀統一樣式 之後再套入Grid -->
     <Window.Resources>
-
         <!--定义字体样式:开始-->
         <Style x:Key="TextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="{Binding ElementName=Main,Path=ConfigManagerInstance.Font_size}"/>
@@ -27,18 +27,61 @@
         </Style>
         <!--定义字体样式:结束-->
         
-        <DataTemplate x:Key="键">
+        
+     <!--定义快速鍵按鈕樣式:開始 原本樣式-->
+        <DataTemplate x:Key="KeyStyle_Default">
             <Border 
                 BorderThickness="1" 
                     CornerRadius="2" 
                     Margin="2 0 2 0"
                     BorderBrush="{Binding ElementName=Main, Path=ConfigManagerInstance.Decoration_color}"
-                    Background="{Binding ElementName=Main, Path=ConfigManagerInstance.Decoration_color}"
-                    >
+                    Background="{Binding ElementName=Main, Path=ConfigManagerInstance.Decoration_color}">
                 <TextBlock Margin="3 0 3 0" Style="{StaticResource TextStyle}" Text="{Binding Path=.}"/>
             </Border>
         </DataTemplate>
 
+        <DataTemplate x:Key="KeyStyle_3D">
+            <!-- 外層 Border: 高度再縮小到 20，圓角和間距也變小 -->
+            <Border Height="20"                
+            Background="#a6afb7" 
+            CornerRadius="2"
+            Margin="3,0">
+
+                <!-- 內層 Border: 高度等比例縮小 (20-2=18)，內部留白大幅減少 -->
+                <Border Height="18"
+                Padding="6,0"
+                VerticalAlignment="Top"
+                Background="#cfdbe6"
+                CornerRadius="2">
+
+                    <!-- 文字內容: 字體進一步縮小到 11，非常緊湊 -->
+                    <TextBlock Text="{Binding Path=.}"
+                       FontFamily="Segoe UI"
+                       FontSize="12"
+                       Foreground="#222222"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+                </Border>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="KeyStyle_Neumorphic">
+            <Grid Margin="4,2">
+                <!-- 陰影層 (深色) -->
+                <Border CornerRadius="6" Background="#d1d9e6" Margin="2 2 0 0"/>
+                <!-- 高光層 (淺色) -->
+                <Border CornerRadius="6" Background="White" Margin="0 0 2 2"/>
+                <!-- 按鈕主體 -->
+                <Border CornerRadius="6" Padding="8,3" Background="#e0e5ec">
+                    <TextBlock Text="{Binding Path=.}" 
+                       FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                       Foreground="#444952"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+<!--定义快速鍵按鈕樣式:結束-->
         <DataTemplate x:Key="键与值">
             <Grid Height="{Binding ElementName=Main, Path=Bigtitle_data_height}">
                 <Grid.ColumnDefinitions>
@@ -47,18 +90,32 @@
                 </Grid.ColumnDefinitions>
                 <ItemsControl Name="键的集合" 
                                     ItemsSource="{Binding Path = Key.Keys}"
-                                    ItemTemplate="{StaticResource 键}"
-                                    Grid.Column="0"
-                              >
+                             
+                                    Grid.Column="0">
+                    <ItemsControl.Style>
+                        <Style TargetType="ItemsControl">
+                            <!-- 預設模板 -->
+                            <Setter Property="ItemTemplate" Value="{StaticResource KeyStyle_Default}" />
+                            <Style.Triggers>
+                                <!-- 如果設定為 '3D'，就切換到 KeyStyle_Flat 模板 -->
+                                <DataTrigger Binding="{Binding ElementName=Main, Path=ConfigManagerInstance.KeyButtonStyle}" Value="3D">
+                                    <Setter Property="ItemTemplate" Value="{StaticResource KeyStyle_3D}" />
+                                </DataTrigger>
+                                <!-- 如果設定為 'Capsule'，就切換到 KeyStyle_Capsule 模板 -->
+                                <DataTrigger Binding="{Binding ElementName=Main, Path=ConfigManagerInstance.KeyButtonStyle}" Value="Neumorphic">
+                                    <Setter Property="ItemTemplate" Value="{StaticResource KeyStyle_Neumorphic}" />
+                                </DataTrigger>
+                                <!-- 你可以根據需要繼續添加更多 DataTrigger -->
+                            </Style.Triggers>
+                        </Style>
+                    </ItemsControl.Style>
+
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
-                                
-                                Orientation="Horizontal"
-
-                                            />
+                                Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -119,12 +176,74 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
         </DataTemplate>
-        
+
+        <Style x:Key="ModernContextMenuStyle" TargetType="{x:Type ContextMenu}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Grid.IsSharedSizeScope" Value="True"/>
+            <Setter Property="HasDropShadow" Value="True"/>
+            <!-- 使用您設定的背景色，並增加透明度 -->
+            <Setter Property="Background" Value="#DD2F2F2F"/>
+            <Setter Property="BorderBrush" Value="{Binding ElementName=Main, Path=ConfigManagerInstance.Decoration_color}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContextMenu}">
+                        <Border x:Name="Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                            <StackPanel IsItemsHost="True"
+                                KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernMenuItemStyle" TargetType="{x:Type MenuItem}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Foreground" Value="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <Border x:Name="Border" Padding="12,8,12,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- 內容，也就是 Header -->
+                                <ContentPresenter x:Name="HeaderHost"
+                                          Grid.Column="1"
+                                          ContentSource="Header"
+                                          RecognizesAccessKey="True"
+                                          VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- 滑鼠懸停時的樣式 -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#4CFFFFFF"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                            <!-- 項目被禁用時的樣式 -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#888888"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     
         
-        <Grid>
+    <Grid>
         <Border Width="{Binding ElementName=Main, Path=Window_Width}" Height="{Binding ElementName=Main, Path=Window_Height}" Background="{Binding ElementName=Main,Path=ConfigManagerInstance.Background_color}" Opacity="{Binding ElementName=Main, Path=ConfigManagerInstance.Background_opacity}" CornerRadius="9,9,9,9">
         </Border>
         <Grid Margin="0,30,0,20">
@@ -133,28 +252,23 @@
                 <RowDefinition Height="1*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0"  Name="ContentList">
-
-
-            <StackPanel Orientation="Horizontal"
+                <StackPanel Orientation="Horizontal"
                 HorizontalAlignment="Left" VerticalAlignment="Top"
                 Margin="25,0,0,0">
-
-                        <!-- (新) 應用程式圖示 -->
-                <Image Source="{Binding FrontAppIcon, ElementName=Main}"
+                    <!-- 應用程式圖示 -->
+                    <Image Source="{Binding FrontAppIcon, ElementName=Main}"
                    Width="24" Height="24"
                    VerticalAlignment="Center" Margin="0,0,8,0" />
-
-                        <!-- (原) ComboBox，但移除了 Margin -->
-                <ComboBox x:Name="CheatSheetSelector"
+                    <!-- ComboBox，但移除了 Margin -->
+                    <ComboBox x:Name="CheatSheetSelector"
                       ItemsSource="{Binding AvailableCheatSheets, ElementName=Main}"
                       SelectedItem="{Binding SelectedCheatSheet, ElementName=Main, Mode=TwoWay}"
                       SelectionChanged="CheatSheetSelector_SelectionChanged"
                       VerticalAlignment="Center"
                       Width="220" Height="30"
                       />
-            </StackPanel>
-
-                <!-- (修改) 調整 ScrollViewer 的 Margin，為上方的 StackPanel 留出空間 -->
+                </StackPanel>
+                <!-- 調整 ScrollViewer 的 Margin，為上方的 StackPanel 留出空間 -->
                 <ScrollViewer Margin="20,40,20,0" VerticalScrollBarVisibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Top" >
                     <ItemsControl
                         Name="列表集合"
@@ -167,98 +281,50 @@
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
                 </ScrollViewer>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                <!-- (新) 加入 ComboBox --><!--
-                <ComboBox x:Name="CheatSheetSelector"
-                          ItemsSource="{Binding AvailableCheatSheets, ElementName=Main}"
-                          SelectedItem="{Binding SelectedCheatSheet, ElementName=Main, Mode=TwoWay}"
-                          SelectionChanged="CheatSheetSelector_SelectionChanged"
-                          HorizontalAlignment="Left" VerticalAlignment="Top"
-                          Margin="25,0,0,0" Width="220" Height="30"
-                          />
-
-
-                --><!-- (修改) 調整 ScrollViewer 的 Margin --><!--
-                <ScrollViewer Margin="20,40,20,0" VerticalScrollBarVisibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Top" >
-                    <ItemsControl
-                        Name="列表集合"
-                        ItemsSource="{Binding ElementName=Main,Path=Data.KeyValueAssemblesListArray}" 
-                        ItemTemplate="{StaticResource ResourceKey=列表}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel  Orientation="Horizontal"  />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                </ScrollViewer>-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                <!--<ScrollViewer Margin="20,0,20,0" VerticalScrollBarVisibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Top" >
-                    <ItemsControl
-                        Name="列表集合"
-                        ItemsSource="{Binding ElementName=Main,Path=Data.KeyValueAssemblesListArray}" 
-                        ItemTemplate="{StaticResource ResourceKey=列表}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel  Orientation="Horizontal"  />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-
-                </ScrollViewer>-->
-
             </Grid>
-            <!--put tool button-->
+            
+            <!--先放置一個Grid先定義Grid的Column的寬度後再寫按鈕-->
             <Grid Grid.Row="1" Name="Tool" ForceCursor="True" Margin="20,0,20,0" >
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
                     <ColumnDefinition Width="10*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="2*"></ColumnDefinition>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Column="0"   VerticalAlignment="Center" Text="{Binding ElementName=Main, Path=Data.Bigtitle}"   Background="{x:Null}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}"  ></TextBlock>
-                <TextBlock Grid.Column="1"   VerticalAlignment="Center" Text="{Binding ElementName=Main, Path=Data.Bigtitle2}" Background="{x:Null}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}"  ></TextBlock>
-                <Button Grid.Column="2"  Template="{StaticResource button_style}" Cursor="Hand"  Height="30"  Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Click="Update_Click" >提示框</Button>
-                <Button Grid.Column="3"  Template="{StaticResource button_style}" Cursor="Hand"  Height="30"  Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Click="Data_Click">新增</Button>
-                <Button Grid.Column="4"  Template="{StaticResource button_style}" Cursor="Hand"  Height="30"  Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Click="Setting_Click">設定</Button>
-                <Button Grid.Column="5"  Template="{StaticResource button_style}" Cursor="Hand"  Height="30"  Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Click="Quit_Click">退出</Button>
-                    <TextBlock Grid.Column="6"  Text="{Binding ElementName=Main,Path=Version}" Width="30" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_of_version}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}"></TextBlock>
+                <Button Grid.Column="0" Name="MenuButton" Content="工具" 
+                    Template="{StaticResource button_style}"
+                    Cursor="Hand" Height="30"  
+                    Background="{x:Null}" BorderBrush="{x:Null}" 
+                    Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}" 
+                    FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}"
+                    Click="MenuButton_Click">
+                    <!-- 這是工具選單的內容 -->
+                    <Button.ContextMenu>
+                        <ContextMenu Style="{StaticResource ModernContextMenuStyle}">
+                            <MenuItem Header="打字機" Style="{StaticResource ModernMenuItemStyle}" Click="Typewriter_Click"/>
+                            <MenuItem Header="快速鍵顯示" Style="{StaticResource ModernMenuItemStyle}" Click="ShowHotkeys_Click"/>
+                            <MenuItem Header="鍵盤貓" Style="{StaticResource ModernMenuItemStyle}" Click="ShowBongoCat_Click"/>
+                            <MenuItem Header="ATNKeyMgr" Style="{StaticResource ModernMenuItemStyle}" Click="ShowBongoCat_Click"/>
+                            <MenuItem Header="KbdEdit" Style="{StaticResource ModernMenuItemStyle}" Click="ShowBongoCat_Click"/>
+                            <MenuItem Header="AddKeys" Style="{StaticResource ModernMenuItemStyle}" Click="ShowBongoCat_Click"/>
+                            <MenuItem Header="ComfortKey" Style="{StaticResource ModernMenuItemStyle}" Click="ShowBongoCat_Click"/>
+                            <MenuItem Header="MyKeymap" Style="{StaticResource ModernMenuItemStyle}" Click="ShowBongoCat_Click"/>
+                            <MenuItem Header="組態" Style="{StaticResource ModernMenuItemStyle}" Click="Conf_Click"/>
+                            <MenuItem Header="設定" Style="{StaticResource ModernMenuItemStyle}" Click="Setting_Click"/>
+                            <MenuItem Header="重啟" Style="{StaticResource ModernMenuItemStyle}" Click="Restart_Click"/>
+                            <Separator Background="#555" Margin="5,0,5,0"/>
+                            <MenuItem Header="結束" Style="{StaticResource ModernMenuItemStyle}" Click="Quit_Click"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0" Text="{Binding ElementName=Main, Path=Data.Bigtitle}" Background="{x:Null}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}"  />
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,0,10,0" Text="{Binding ElementName=Main, Path=Data.Bigtitle2}" Background="{x:Null}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}"  />
+                <Button Grid.Column="3" Template="{StaticResource button_style}" Cursor="Hand" Height="30" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Click="Update_Click" >提示</Button>
+                <Button Grid.Column="4" Template="{StaticResource button_style}" Cursor="Hand" Height="30" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Click="Data_Click">新增</Button>
+                <Button Grid.Column="5" Template="{StaticResource button_style}" Cursor="Hand" Height="30" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_in_Toolbar}" Click="Setting_Click">鍵位圖</Button>
+                <TextBlock Grid.Column="6" Text="{Binding ElementName=Main,Path=Version}" Width="30" Height="10" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_size_Title_of_version}" Foreground="{Binding ElementName=Main, Path=ConfigManagerInstance.Font_color}" Margin="10,0,0,0"/>
             </Grid>
         </Grid>
     </Grid>
