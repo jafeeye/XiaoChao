@@ -75,11 +75,11 @@ https://github.com/HaujetZhao/ShortcutMapper_Chinese
 https://github.com/JinSooo/CheatSheet  
 https://github.com/ayangweb/BongoCat  
 https://github.com/pluveto/ShortcutMap  
+keymap  
 https://www.azofreeware.com/2020/06/lct.html 
 
-## 相關軟體
+## 相關快速鍵綁定軟體
 - AutoHotKey   
 - ComfortKey  
 - ATNSOFT Keymanager
 - Mykeymap
-- keymap
