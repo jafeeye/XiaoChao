@@ -42,6 +42,8 @@ namespace xiaochao
 
         public int Window_Width { get; set; } = 1200;
 
+        public string KeyButtonStyle { get; set; } = "Default";
+
         #region ConfigManager初始化函数
         private ConfigManager()
         {
@@ -153,6 +155,14 @@ namespace xiaochao
                 }
             }
 
+            // *** 新增 ***: 讀取按鍵樣式的設定
+            if (config_dictionary.TryGetValue("按鍵樣式", out string style))
+            {
+                // 為了安全，可以檢查一下是否為我們支援的樣式，但直接賦值也行
+                KeyButtonStyle = style;
+            }
+
+
         }
 
         public void SaveConfig()
@@ -167,7 +177,8 @@ namespace xiaochao
             $"基準大小 {Font_size}",
             $"顯示欄數 {Column_count}",
             $"視窗高度 {Window_Height}",
-            $"視窗寬度 {Window_Width}"
+            $"視窗寬度 {Window_Width}",
+            $"按鍵樣式 {KeyButtonStyle}"
         };
             File.WriteAllLines(Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "设置.md"), lines);
         }
