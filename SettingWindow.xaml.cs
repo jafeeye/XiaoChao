@@ -57,7 +57,7 @@ namespace xiaochao
             {
                 Config.Font_color = "#000000";
                 Config.Decoration_color = "#ecf0f1";
-                Config.Background_opacity = 1;
+                Config.Background_opacity = 0.9;
                 Config.Background_color = "#e5e5e5";
             }
             else if (selected == "自訂")
