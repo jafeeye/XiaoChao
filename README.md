@@ -78,7 +78,7 @@ https://github.com/pluveto/ShortcutMap
 keymap  
 https://www.azofreeware.com/2020/06/lct.html 
 
-## 相關快速鍵綁定軟體
+## 快速鍵綁定軟體
 - AutoHotKey   
 - ComfortKey  
 - ATNSOFT Keymanager
