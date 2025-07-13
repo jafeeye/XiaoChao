@@ -16,14 +16,14 @@
 - [x] 使用下拉選單檢視不同應用程式快速鍵
 - [x] 增加設置.md 設置項
 - [x] 新增鈕隨意修改
-- [ ] 下拉選單顯示軟體名稱
+- [x] 新增按鈕樣式
 - [x] 執行 bongo-cat 鍵盤貓按鈕
 - [x] 顯示目前快速鍵按鈕
 - [x] 鍵盤熱力圖
 - [x] 打字測速
-- [ ] 完善Tooltip
-- [ ] 錄入快速鍵
-- [ ] 新增按鈕樣式 [pluvetoShortcutMap](https://github.com/pluveto/ShortcutMap?tab=readme-ov-file)
+- [ ] Tooltip
+- [ ] 下拉選單顯示原名稱
+- [ ] 快速鍵鍵盤分布
 
 ## 調整設置
 
@@ -74,7 +74,8 @@ https://github.com/telppa/KMCounter
 https://github.com/HaujetZhao/ShortcutMapper_Chinese  
 https://github.com/JinSooo/CheatSheet  
 https://github.com/ayangweb/BongoCat  
-https://www.azofreeware.com/2020/06/lct.html  
+https://github.com/pluveto/ShortcutMap  
+https://www.azofreeware.com/2020/06/lct.html 
 
 ## 相關軟體
 - AutoHotKey   
