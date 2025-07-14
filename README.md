@@ -76,7 +76,7 @@ https://github.com/HaujetZhao/ShortcutMapper_Chinese
 https://github.com/JinSooo/CheatSheet  
 https://github.com/ayangweb/BongoCat  
 https://github.com/pluveto/ShortcutMap  
-[keymap](https://github.com/cataerogong/keymap)
+[keymap](https://github.com/cataerogong/keymap)  
 https://www.azofreeware.com/2020/06/lct.html 
 
 ## 快速鍵綁定軟體
