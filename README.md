@@ -22,9 +22,9 @@
 - [x] 鍵盤熱力圖
 - [x] 打字測速
 - [x] 鍵位圖 (整合Keymap)
-- [ ] Tooltip
-- [ ] 下拉選單正確名稱
-- [ ] keymap正確切換並回寫json
+- [ ] Tooltip (AHK)
+- [ ] 下拉選單自訂名稱
+- [ ] keymap切換回寫json
 
 ## 調整設置
 
