@@ -24,7 +24,7 @@
 - [x] 鍵位圖 (整合Keymap)
 - [ ] Tooltip (AHK)
 - [ ] 下拉選單自訂名稱
-- [ ] keymap切換回寫json
+- [ ] keymap切換回寫json(考慮是否用舊邏輯)
 
 ## 調整設置
 
@@ -76,7 +76,7 @@ https://github.com/HaujetZhao/ShortcutMapper_Chinese
 https://github.com/JinSooo/CheatSheet  
 https://github.com/ayangweb/BongoCat  
 https://github.com/pluveto/ShortcutMap  
-keymap  
+[keymap](https://github.com/cataerogong/keymap)
 https://www.azofreeware.com/2020/06/lct.html 
 
 ## 快速鍵綁定軟體
