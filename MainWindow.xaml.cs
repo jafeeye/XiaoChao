@@ -194,7 +194,12 @@ namespace xiaochao
         public int Column_Width { get; set; }
         public int Colum_Item_Width { get; set; }
         public string Version { get; set; } = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-       
+
+ //=====================================================================================================
+// 在這段之前都是進入GUI程式時需要讀取設定檔，以下為初始化界面
+//=====================================================================================================
+
+
 
         #region 构造函数
         public MainWindow()
@@ -236,7 +241,37 @@ namespace xiaochao
                 // (修改) 首次顯示時需要更新資料
                 UpdateDataAndUI();
             }
+            InitializeWebView();
         }
+
+        private async void InitializeWebView()
+        {
+            // 確保 WebView2 的核心環境已初始化
+            await WebView.EnsureCoreWebView2Async(null);
+
+            // 1. 獲取應用程式的基底目錄 (也就是 exe 檔案所在的目錄)
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            // 2. 組合出 keymap.html 的完整路徑
+            // Path.Combine 會自動處理路徑分隔符號 '\'
+            string keymapPath = Path.Combine(baseDirectory, "keymap", "keymap.html");
+
+            // 3. 檢查檔案是否存在，這是一個好的習慣
+            if (File.Exists(keymapPath))
+            {
+                // 4. 將檔案路徑轉換為 WebView2 可以識別的 URI 格式，並設定 Source
+                WebView.CoreWebView2.Navigate(new Uri(keymapPath).AbsoluteUri);
+            }
+            else
+            {
+                // 如果檔案不存在，可以在 WebView 中顯示錯誤訊息或禁用按鈕
+                WebView.CoreWebView2.NavigateToString("<html><body><h1>錯誤</h1><p>找不到 keymap.html 檔案。</p></body></html>");
+
+                // 或者，直接禁用「分布圖」按鈕
+                // DistributionMapButton.IsEnabled = false;
+            }
+        }
+
 
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -471,6 +506,10 @@ namespace xiaochao
         }
 
 
+//=====================================================================================================
+// 以下為所有GUI按鍵事件處理方法
+//=====================================================================================================
+
         private void MenuButton_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as System.Windows.Controls.Button;
@@ -559,7 +598,6 @@ namespace xiaochao
                 UpdateIconForSheet(selectedSheet);
             }
         }
-
         #region Unchanged Methods
 
         /// <summary>
@@ -902,13 +940,32 @@ namespace xiaochao
             }
         }
 
+        private void DistributionMap_Click(object sender, RoutedEventArgs e)
+        {
+            // 隱藏快捷鍵列表
+            CheatSheetScrollViewer.Visibility = Visibility.Collapsed;
+            // 顯示 WebView
+            WebView.Visibility = Visibility.Visible;
 
+            // 隱藏 "分布圖" 按鈕
+            DistributionMapButton.Visibility = Visibility.Collapsed;
+            // 顯示 "返回" 按鈕
+            BackButton.Visibility = Visibility.Visible;
+        }
 
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            // 顯示快捷鍵列表
+            CheatSheetScrollViewer.Visibility = Visibility.Visible;
+            // 隱藏 WebView
+            WebView.Visibility = Visibility.Collapsed;
 
-
+            // 顯示 "分布圖" 按鈕
+            DistributionMapButton.Visibility = Visibility.Visible;
+            // 隱藏 "返回" 按鈕
+            BackButton.Visibility = Visibility.Collapsed;
+        }
 
     }
-
-
 
 }
