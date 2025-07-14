@@ -1,0 +1,4781 @@
+<!-- <!DOCTYPE html> -->
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<style>
+:root {
+    --cols: 2; /* mapping-list columns */
+    --c0: black; /* highlight color */
+    --c1: lightblue; /* highlight keycap color */
+    --c2: lightseagreen; /* border color */
+    --c3: black; /* unset fore color */
+    --c4: whitesmoke; /* unset keycap color */
+    --kb-bgc: lightgray; /* keyboard bg color */
+    --kb-bdc: gray; /* keyboard border color */
+    --ks: calc(1rem * var(--ks1, 0.75)); /* key font size */
+    --kw: calc(1rem * var(--kw1, 3)); /* key width */
+    --kh: calc(1rem * var(--kh1, 3)); /* key height */
+    --kt: calc(1rem * var(--kt2, 0.75)); /* keycap description text size */
+    --mod-cs: calc(1rem * var(--mod-cs2, 0.7));
+    --mod-ds: calc(1rem * var(--mod-ds2, 0.5));
+    --cmnt-fs: calc(1rem * var(--comment-font-size, 0.9));
+    --ui-fc: black;
+    --ui-bgc: lightblue;
+    --ui-bdc: lightseagreen;
+    --sw: var(--sidebar-width, 20rem);
+}
+[data-kbhint="true"] {
+    --ks: calc(1rem * var(--ks2, 0.9)); /* key font size */
+    --kw: calc(1rem * var(--kw2, 5)); /* key width */
+    --kh: calc(1rem * var(--kh2, 5)); /* key height */
+}
+
+body {
+    font-family: Consolas, sans-serif;
+    font-size: 0.9rem;
+    margin: 0px;
+    height: 100%;
+    background-color: whitesmoke;
+    overflow-y: hidden;
+    display: flex;
+    flex-flow: column;
+    width: var(--w, 100%);
+    border: 1px solid darkgray;
+    border-width: 0px 1px;
+}
+
+textarea {
+    resize: none;
+    font-size: 0.9rem;
+    font-family: Consolas, sans-serif;
+    border: 1px solid lightgray;
+    outline: 0px;
+    padding: 5px;
+    background-color: cornsilk;
+}
+
+input[type="checkbox"] {
+    vertical-align: bottom;
+}
+
+keyboard {
+    position: relative;
+    box-sizing: border-box;
+    border: 1px solid var(--kb-bdc);
+    border-radius: 10px;
+    background-color: var(--kb-bgc);
+    /* background-image: linear-gradient(0deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.85) 100%); */
+    padding: 10px;
+    height: fit-content;
+    margin: 5px 0px;
+}
+keyboard:hover {
+    /* box-shadow: 2px 2px 2px; */
+}
+
+#kb_std {
+    display: flex;
+    flex-flow: row;
+    gap: 10px;
+    width: fit-content;
+}
+
+#kb_ext {
+    display: flex;
+    flex-flow: column;
+    gap: 3px;
+    width: var(--kbw);
+}
+
+kb_pc,
+kb_main,
+kb_dir,
+kb_num,
+kb_mac {
+    display: grid;
+    gap: 3px;
+    width: max-content;
+    height: fit-content;
+    /* overflow: hidden; */
+}
+kb_pc,
+kb_mac {
+    grid-template-columns: repeat(3, max-content);
+    grid-auto-flow: row;
+    gap: 10px;
+}
+
+kb_pc kb_main {
+    grid-template-rows: var(--kh) 10px repeat(5, var(--kh));
+    grid-auto-rows: var(--kh);
+}
+
+kb_pc kb_dir {
+    /* grid-template: var(--kh) 10px repeat(5, var(--kh)) / repeat(3, var(--kw)); */
+    grid-template-rows: var(--kh) 10px repeat(5, var(--kh));
+    grid-auto-rows: var(--kh);
+}
+
+kb_pc kb_num {
+    grid-template: repeat(5, var(--kh)) / repeat(4, var(--kw));
+    margin-top: calc(var(--kh) + 10px + 3px * 2);
+}
+
+kb_mac kb_main {
+    grid-template-rows: repeat(6, var(--kh));
+    grid-auto-rows: var(--kh);
+}
+
+kb_mac kb_dir {
+    grid-template-rows: repeat(6, var(--kh));
+    grid-auto-rows: var(--kh);
+}
+
+kb_mac kb_num {
+    grid-template: repeat(6, var(--kh)) / repeat(4, var(--kw));
+}
+
+kr {
+    display: flex;
+    justify-content: space-between;
+    height: var(--kh);
+    gap: 3px;
+}
+
+[data-layout="mac"] kr {
+    gap: 5px;
+}
+
+kr.Fn {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: min-content 1fr repeat(4, min-content) 1fr repeat(4, min-content) 1fr repeat(4, min-content);
+}
+
+krx {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    min-height: var(--kh);
+    height: auto;
+    gap: 3px;
+}
+
+[data-kbsize="0"] #kb_std {
+    border-width: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    height: 0px;
+    overflow: hidden;
+}
+
+[data-kbext="false"] #kb_ext,
+[data-kbsize="0"] :is(kb_dir, kb_num),
+[data-kbsize="1"] :is(kb_dir, kb_num),
+[data-kbsize="2"] kb_num {
+    display: none;
+}
+
+k, .k {
+    color: var(--c3);
+    font-size: var(--ks);
+    font-weight: bold;
+    box-sizing: border-box;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    background-color: var(--c4);
+    width: var(--kw);
+    height: var(--kh);
+    padding: 3px 3px;
+    display: flex;
+    flex-flow: column;
+}
+k {
+    cursor: pointer;
+    position: relative;
+}
+k:hover,
+k.set {
+    box-shadow: 1px 1px;
+}
+k.set {
+    color: var(--c0);
+    /* border-color: var(--c2); */
+    background-color: var(--c1);
+}
+k.set.group {
+    background-color: var(--gc, var(--c1));
+}
+k.sel {
+    outline: 2px dashed lightseagreen;
+}
+k.rel {
+    /* border-width: 2px; */
+}
+k.no-rel {
+    filter: opacity(0.5);
+}
+
+#kb_ext d {
+    box-sizing: border-box;
+    /* min-width: var(--kw); */
+    width: var(--kw);
+    height: var(--kh);
+}
+
+.k1 {
+    width: var(--kw);
+}
+
+.k13 {
+    width: calc(var(--kw) * 1.3 + 3px);
+}
+
+.k15 {
+    width: calc(var(--kw) * 1.5 + 3px);
+}
+
+.k2,
+.k2h {
+    width: calc(var(--kw) * 2 + 3px);
+}
+
+.k25 {
+    width: calc(var(--kw) * 2.5 + 4px);
+}
+
+.kspace {
+    flex: 1;
+}
+
+.k2v {
+    grid-row: span 2;
+    /* height: calc(var(--kh) * 2 + 3px); */
+    height: 100%;
+}
+
+.k05 {
+    width: calc(var(--kw) / 2);
+}
+
+.k05v {
+    height: calc(var(--kh) / 2);
+}
+
+.k2h {
+    grid-column: span 2;
+    width: 100%;
+}
+
+d {
+    display: inline-block;
+    border: 1px solid transparent;
+    height: var(--kh);
+}
+
+.dis {
+    cursor: not-allowed;
+    background-color: pink;
+    background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%);
+    background-size: calc(var(--kw) / 2) calc(var(--kh) / 2);
+}
+
+kn, km {
+    box-sizing: border-box;
+    display: inline-block;
+    line-height: 1rem;
+    vertical-align: middle;
+}
+kn {
+    font-weight: bold;
+    color: var(--c0);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    height: fit-content;
+    width: fit-content;
+    min-width: 2rem;
+    padding: 2px 5px;
+    margin: 0px 1px;
+    text-align: center;
+    position: relative;
+}
+kn.ck {
+    font-weight: normal;
+    background-color: var(--c1);
+    border-color: white;
+}
+kn.mk {
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: white;
+    border: 1px solid lightgray;
+}
+
+kcombo {
+    cursor: pointer;
+    display: flex;
+    gap: 2px;
+}
+kcombo.group {
+    /* padding: 3px;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    background-color: var(--gc, transparent); */
+}
+kcombo.group kn.mk::after {
+    /* 快捷鍵列表中，主鍵上顯示分組色塊 */
+    content: "";
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 7px;
+    height: 7px;
+    background-color: var(--gc);
+    border-radius: 2px;
+}
+kcombo.is_main kn.mk::before {
+    /* 快捷鍵列表中，主鍵上顯示主快捷鍵標誌 */
+    content: "★";
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 0px;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 10px;
+    color: #666;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.f-end {
+    justify-self: end;
+    text-align: right;
+}
+
+kinfo {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    white-space: pre-wrap;
+    word-break: break-all;
+    word-wrap: break-word;
+    padding: 2px 10px;
+    margin-right: 5px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    min-width: 4rem;
+}
+
+.mod_color {
+    color: white;
+    --m-c1: var(--mod-c1, white);
+    --m-c2: var(--mod-c2, white);;
+    --m-c3: var(--mod-c1, var(--mod-c2, white));
+    --m-c4: var(--mod-c2, var(--mod-c1, white));
+    background-image: linear-gradient(135deg, var(--m-c1) 0%, var(--m-c1) 20%, var(--m-c3) 20%, var(--m-c3) 50%, var(--m-c4) 50%, var(--m-c4) 80%, var(--m-c2) 80%, var(--m-c2) 100%);
+}
+
+.ktn, .ktr, .ktm {
+    box-sizing: border-box;
+    pointer-events: none;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.ktn {
+    text-align: right;
+}
+.ktr {
+    overflow-wrap: anywhere;
+    flex: 1;
+    font-size: var(--kt);
+    white-space: pre-wrap;
+    display: grid;
+    grid-template: max-content / 1fr max-content;
+    text-align: right;
+}
+.ktr .mk {
+    font-size: var(--ks);
+    height: calc(var(--ks) + 6px);
+    min-width: calc(var(--ks) + 6px);
+    text-align: center;
+    display: inline-block;
+    box-sizing: border-box;
+    border-radius: 3px;
+    margin-left: 2px;
+    padding: 0px 2px;
+    justify-self: end;
+}
+k.mod .ktn,
+k.mod .ktr .mk {
+    text-decoration: underline dashed;
+    text-underline-offset: 2px;
+}
+.ktr .mod {
+    font-size: var(--mod-cs);
+    display: inline-block;
+    box-sizing: border-box;
+    border: 1px solid var(--c2);
+    border-radius: 2px;
+    padding: 0px 2px;
+    text-align: center;
+}
+.ktr .mod.mod_color {
+    border-color: white;
+}
+.ktr .mod_raw {
+    height: calc(var(--mod-cs) + 2px);
+    line-height: var(--mod-cs);
+    background-color: var(--c1);
+}
+.ktr .mod_chr {
+    height: calc(var(--mod-cs) + 2px);
+    line-height: var(--mod-cs);
+    min-width: calc(var(--mod-cs) + 2px);
+    background-color: var(--c1);
+}
+.ktr .mod_dot {
+    height: var(--mod-ds);
+    width: var(--mod-ds);
+    background-color: var(--c1);
+    margin-top: 1px;
+}
+.ktr .mod_dot.mod_color {
+    --m-c3: var(--mod-c1, white);
+    --m-c4: var(--mod-c2, white);
+}
+kn.na,
+.ktr .na {
+    color: gray !important;
+    background-color: whitesmoke !important;
+    background-image: unset !important;
+    border: 1px solid gray !important;
+}
+.ktr .cnt {
+    position: absolute;
+    top: var(--ks);
+    right: 0px;
+    color: gray;
+    font-size: 11px;
+    height: 13px;
+    min-width: 13px;
+    border-radius: 4px;
+    /* background-color: rgba(255, 255, 255, 0.5); */
+    text-align: center;
+}
+[data-cnt="false"] .cnt {
+    display: none;
+}
+
+.ktm {
+    overflow: hidden;
+    font-size: var(--kt);
+    font-weight: normal;
+    white-space: pre-wrap;
+}
+
+[data-kbhint="true"] .ktn,
+[data-kbhint="false"] .ktr,
+[data-kbhint="false"] .ktm {
+    display: none;
+}
+
+
+.kms_info {
+    box-sizing: border-box;
+    border: 1px solid var(--c2);
+    border-radius: 5px;
+    background-color: whitesmoke;
+    width: fit-content;
+    height: fit-content;
+    padding: 5px;
+    display: grid;
+    grid-template-columns: max-content max-content 1fr;
+    gap: 3px 1px;
+    align-content: flex-start;
+    /* pointer-events: none; */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* max-width: calc(var(--w) * 0.5); */
+    position: absolute;
+    box-shadow: 2px 3px 10px 0px #000;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 2;
+}
+
+.btn {
+    padding: 3px 6px;
+    border: 1px solid darkgray;
+    cursor: pointer;
+    background-color:whitesmoke;
+    white-space: nowrap;
+}
+
+.danger:hover {
+    color: black !important;
+    border-color: red !important;
+    background-color:lightpink !important;
+}
+.danger:hover svg {
+    fill: red !important;
+}
+.smbtn {
+    box-sizing: border-box;
+    font-size: 12px;
+    line-height: 12px;
+    text-align: center;
+    padding: 0px 3px;
+    height: 20px;
+    min-width: 24px;
+    border: 1px solid lightgray;
+    cursor: pointer;
+}
+.btn:hover,
+.smbtn:hover {
+    border-color: var(--ui-bdc);
+    background-color: var(--ui-bgc);
+    color: var(--ui-fc);
+}
+
+.btn_l {
+    font-size: 0.8rem;
+    line-height: 1rem;
+    height: 1.3rem;
+    vertical-align: bottom;
+    border: 1px solid lightgray;
+    color: darkgray;
+    cursor: pointer;
+}
+
+.btn_l:hover,
+.btn_l_cur {
+    font-weight: bold;
+    color: var(--ui-fc);
+    border-color: var(--ui-bdc);
+    background-color: var(--ui-bgc);
+}
+
+.tabbtn {
+    display: inline-block;
+    border-radius: 5px 5px 0 0;
+    padding: 5px 10px 0px;
+    cursor: pointer;
+}
+.tabbtn:hover {
+    background-color: #e7e7e7;
+}
+[data-view="k"] #tabbtn_kb,
+[data-view="l"] #tabbtn_list,
+[data-view="j"] #tabbtn_json {
+    background-color: whitesmoke;
+}
+
+
+#kb_ops,
+#json_ops {
+    display: flex;
+    gap: 2px;
+    border-style: solid;
+    border-color: lightgray;
+    border-width: 0px 0px 1px 0px;
+    background-color: whitesmoke;
+    align-items: center;
+    min-height: 2rem;
+}
+
+[data-view="k"] #json_ops,
+[data-view="l"] #json_ops,
+[data-view="j"] #kb_ops {
+    display: none;
+}
+[data-view="l"] #btn_hint {
+    display: none;
+}
+[data-view="k"] #btn_list_by {
+    display: none;
+}
+
+.tab {
+    display: flex;
+    flex-flow: column;
+    box-sizing: border-box;
+    visibility: hidden;
+    position: absolute;
+    height: 100%;
+    background-color: whitesmoke;
+    overflow-y: auto;
+}
+#tab_kb {
+    width: fit-content;
+    padding: 0px 10px;
+}
+[data-view="k"] #tab_kb ,
+[data-view="l"] #tab_list,
+[data-view="j"] #tab_json {
+    visibility: visible;
+    position: static;
+}
+
+#mods {
+    margin: 2px 5px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    background-color: #eaeaea;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+}
+#mods::before {
+    content: "篩選";
+}
+#list {
+    padding: 10px 0px;
+    box-sizing: border-box;
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+}
+#list>.group {
+    columns: 360px auto;
+    column-rule: 1px dashed darkgray;
+    margin-bottom:10px;
+    padding: 5px;
+    border-radius: 10px;
+}
+#list .group_label {
+    column-span: all;
+    padding: 2px 10px;
+    font-weight: bold;
+    border-radius: 5px;
+    background-color: rgba(173, 216, 230, 0.5);
+    display: flex;
+    margin-bottom: 10px;
+}
+#list .group_label::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: var(--gc);
+    border: 1px solid gray;
+    border-radius: 4px;
+    margin-right: 10px;
+    align-self: center;
+}
+#list .group_label .num {
+    color: #333;
+    font-weight: normal;
+    font-size: 75%;
+    margin: auto auto auto 5px;
+}
+#list .shortcut {
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    gap: 5px;
+    padding: 1px;
+    margin-bottom: 5px;
+    overflow-y: auto;
+    align-items: start;
+}
+#list kn.mk, 
+#list kn.ck.sel {
+    box-shadow: 1px 1px #000;
+}
+#list kn.ck.no-sel {
+    color: #333;
+    /* background-color: rgba(255, 255, 255, 0.85);
+    background-blend-mode: overlay; */
+    background-image: unset;
+    /* background-color: rgba(173, 216, 230, 0.5); */
+    background-color: #e0e0e0;
+}
+
+#json {
+    width: 100%;
+    height: 100%;
+}
+
+dialog {
+    display: flex;
+    flex-flow: column;
+    align-content: flex-start;
+    gap: 1rem;
+    border: 2px solid var(--ui-bdc);
+    border-radius: 10px;
+    box-shadow: 0px 5px 5px;
+    margin-left: calc(var(--w) / 2);
+    transform: translateX(-50%);
+}
+
+dialog .btn_box {
+    text-align: right;
+    /* padding: 3px;
+    border-top: 1px solid darkgray; */
+}
+
+.kmdlg {
+    width: 40rem;
+}
+.kmdlg .message {
+    transition: all 0.3s;
+    color: var(--ui-bdc);
+}
+
+.name_dlg input[type="text"] {
+    font-size: 1rem;
+    height: 1.6em;
+}
+
+.stdlg {
+    transform: unset;
+    margin: auto;
+}
+.stdlg .sts {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 5px 1rem;
+    align-items:start;
+    padding-bottom: 10px;
+    border-bottom: 1px solid gray;
+    flex: 1;
+    overflow-y: auto;
+}
+.stdlg .subttl {
+    grid-column: 1 / -1;
+    font-weight: bold;
+    background-color: var(--ui-bgc);
+    padding: 3px;
+    text-align: center;
+}
+.stdlg span {
+    text-align: end;
+}
+.stdlg input[type="text"] {
+    font-size: 0.9rem;
+    height: 1.4em;
+}
+.stdlg textarea {
+    padding: 1px;
+    border:1px solid black;
+    height: 1.5em;
+    transition: height 0.3s;
+}
+.stdlg textarea:focus {
+    height: 6em;
+}
+
+.about {
+    height: 1.5rem;
+    color: #666;
+    background-color: #e0e0e0;
+    padding: 0px 5px;
+    text-align: right;
+}
+
+.prof_name {
+    box-sizing: border-box;
+    color: var(--ui-fc);
+    border: 1px solid var(--ui-bgc);
+    border-radius: 5px;
+    padding: 3px 1rem;
+    /* width: 20rem; */
+    width: 100%;
+    height: 26px;
+    line-height: 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: stroke;
+}
+.prof_name:hover {
+    font-weight: bold;
+    background-color: var(--ui-bgc);
+}
+.prof_list {
+    display: flex;
+    flex-flow: column;
+    gap: 3px;
+}
+.prof_list.popup {
+    box-sizing: content-box;
+    /* outline: 1px solid var(--ui-bdc); */
+    border-radius: 5px;
+    box-shadow: 0px 3px 6px #000;
+    background-color: whitesmoke;
+    max-height: 90%;
+    padding: 5px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: opacity 0.3s;
+    z-index: 2;
+}
+.prof_list .prof_name {
+    position: relative;
+    /* margin-bottom: 5px; */
+    /* margin-left: 1rem; */
+}
+.prof_list .prof_name[data-index]::before {
+    content: attr(data-index);
+    position: absolute;
+    font-size: 11px;
+    /* left: 0.5rem; */
+    left: 0px;
+    top: 0px;
+    color: whitesmoke;
+    background-color: darkgray;
+    padding: 0px 3px;
+    border-radius: 3px;
+}
+.prof_cur {
+    font-weight: bold;
+    background-color: var(--ui-bgc);
+    border-color: var(--ui-bdc);
+}
+.prof_cmd {
+    background-color: cornsilk;
+    border-color: goldenrod;
+    font-weight: bold;
+}
+
+#prof_name,
+.prof_list.popup {
+    width: 20rem;
+}
+#sidebar {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 3px;
+    left: 0px;
+    background-color: #f0f0f0;
+    overflow-y: auto;
+    z-index: -1;
+    width: var(--sw);
+}
+#sidebar:hover {
+    z-index: 1;
+}
+[data-sidebar-pin="false"] #sidebar {
+    box-shadow: 0px 0px 10px #666;
+}
+[data-sidebar-pin="false"] #sidebar .prof_name {
+    opacity: 0.3;
+}
+#sidebar:hover .prof_name {
+    opacity: 1;
+}
+
+.rnd {
+    border-radius: 5px;
+}
+#row_cap {
+    display: flex;
+    box-sizing: border-box;
+    height: 2rem;
+    line-height: 2rem;
+    color: #666;
+    background-color: #e0e0e0;
+    position: relative;
+}
+.caption {
+    font-family: sans-serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+.slogan {
+    font-family: sans-serif;
+    font-size: 75%;
+}
+#row_tabbar {
+    display: flex;
+    gap: 3px;
+    /* padding-top: 5px; */
+    background-color: #e0e0e0;
+}
+#comment, #pcomment {
+    box-sizing: border-box;
+    flex: 1 0 15rem;
+    /* height: 10rem; */
+    width: var(--kbw);
+    font-size: var(--cmnt-fs);
+    margin: 10px 0px;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: cornsilk;
+}
+#pcomment {
+    /* display: none; */
+    white-space: pre-wrap;
+    overflow: auto;
+    border: 1px solid gray;
+}
+#comment {
+    display: none;
+    border: 1px solid var(--ui-bdc);
+    box-shadow: 0px 0px 5px #333;
+}
+[data-comment="false"] #pcomment {
+    display: none;
+}
+#row_name {
+    position: absolute;
+    display: flex;
+    gap: 2px;
+    padding: 3px 0px;
+    width: var(--kbw);
+    pointer-events: none;
+}
+#pname_keymap {
+    color: var(--ui-fc);
+    border: 1px solid var(--ui-bdc);
+    border-radius: 5px;
+    padding: 3px 1em;
+    font-weight: bold;
+    background-color: var(--ui-bgc);
+}
+#pname_layer {
+    padding: 3px 6px;
+    border: 1px solid var(--ui-bdc);
+    border-radius: 5px;
+    background-color: whitesmoke;
+    pointer-events: stroke;
+    cursor: pointer;
+}
+.layer_list {
+    padding: 3px 6px;
+    border: 1px solid var(--ui-bdc);
+    border-radius: 5px;
+    background-color: whitesmoke;
+    box-shadow: 0px 3px 6px #000;
+    z-index: 1;
+}
+.opt_l {
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    margin: 3px;
+    padding: 0px 5px;
+}
+.opt_l:hover {
+    border-color: var(--ui-bdc);
+}
+.opt_l_cur {
+    background-color: var(--ui-bgc);
+}
+[data-ui="single"] body {
+    height: fit-content;
+    overflow: auto;
+}
+[data-ui="tab"] #row_name,
+[data-ui="single"] :is(#btn_load_file, #btn_save_file, #row_tabbar, #kb_ops, #pcomment, #mods, #json_ops, #tab_json, #sidebar, #btn_sidebar, #prof_name) {
+    display: none;
+}
+[data-ui="single"] :is(#tab_kb, #tab_list, keyboard) {
+    position: static;
+    visibility: visible;
+    height: fit-content;
+}
+
+[data-ui="single"] #tab_kb {
+    border-color: transparent;
+}
+#ui_switch {
+    display: flex;
+    gap: 2px;
+    position: relative;
+    height: 24px;
+    width: 48px;
+    align-self: center;
+    align-content: center;
+    justify-content: center;
+}
+#btn_ui_single,
+#btn_ui_tab {
+    align-self: center;
+    position: relative;
+    z-index: 1;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: whitesmoke;
+  transition: .4s;
+  border-radius: 5px;
+}
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  border-radius: 5px;
+  left: 1px;
+  top: 1px;
+  z-index: 2;
+  background-color: var(--ui-bgc);
+  transition: .4s;
+}
+[data-ui="single"] .slider::before {
+  transform: translateX(24px);
+}
+
+[data-layout="mac"] kb_pc {
+    display: none;
+}
+[data-layout="pc"] kb_mac {
+    display: none;
+}
+.btn_icon {
+    height: 24px;
+    width: 24px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    background-color: whitesmoke;
+    color: var(--ui-bdc);
+}
+.btn_icon svg {
+    height: 24px;
+    width: 24px;
+    fill: var(--ui-bdc);
+}
+[data-kbhint="true"] #btn_hint,
+[data-layout="mac"] #btn_layout,
+[data-showall="true"] #btn_showall,
+[data-list-by="group"] #btn_list_by,
+[data-sidebar-enable="true"] #btn_sidebar,
+[data-sidebar-pin="true"] #btn_pin,
+.btn_icon1:hover {
+    font-weight: bold;
+    color: var(--ui-bdc);
+    border-color: var(--ui-bdc);
+    background-color: var(--ui-bgc);
+}
+[data-kbhint="true"] #btn_hint svg,
+[data-layout="mac"] #btn_layout svg,
+[data-showall="true"] #btn_showall svg,
+[data-list-by="group"] #btn_list_by svg,
+[data-sidebar-enable="true"] #btn_sidebar svg,
+[data-sidebar-pin="true"] #btn_pin svg,
+.btn_icon1:hover svg {
+    fill: var(--ui-bdc);
+}
+
+.btn_chk {
+    color: lightgray;
+}
+.btn_chk svg {
+    fill: lightgray;
+}
+
+.btn_icon_sm,
+.btn_icon_sm svg {
+    border-radius: 4px;
+    height: 20px;
+    width: 20px;
+}
+
+[data-view="k"] #btn_multi_ops {
+    display: none;
+}
+#lst_multi_ops {
+    box-sizing: content-box;
+    padding: 3px;
+    position: absolute;
+    right: -1px;
+    background-color: whitesmoke;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    box-shadow: 2px 2px 4px darkgray;
+    visibility: hidden;
+}
+#lst_multi_ops div {
+    align-items: center;
+    white-space: nowrap;
+    display: flex;
+    gap: 5px;
+    border: 0px;
+    color: var(--ui-fc);
+}
+#lst_multi_ops div svg {
+    height: 24px;
+    width: 24px;
+}
+#btn_multi_ops:hover svg {
+    fill: var(--ui-bdc);
+}
+#btn_multi_ops:hover #lst_multi_ops {
+    visibility: visible;
+    z-index: 1;
+}
+
+[data-help]:hover::after {
+    content: attr(data-help);
+    position: absolute;
+    /* visibility: hidden; */
+    transform: translate(-1px, 1px);
+    font-size: 0.9rem;
+    font-weight: normal;
+    line-height: 1rem;
+    color: #666;
+    display: block;
+    border: 1px solid darkgray;
+    background-color: whitesmoke;
+    box-shadow: 2px 2px 4px darkgray;
+    padding: 3px;
+    white-space: pre;
+    z-index: 1;
+    /* opacity: 0; */
+    /* transition: opacity 0.3s; */
+    pointer-events: none;
+}
+
+[data-sidebar-enable="true"][data-sidebar-pin="true"] body {
+    margin-left: calc(var(--sw) + 2px);
+}
+[data-sidebar-enable="true"][data-sidebar-pin="false"] body {
+    margin-left: 30px;
+}
+[data-sidebar-enable="true"] #prof_name {
+    display: none;
+}
+[data-sidebar-enable="false"] #sidebar {
+    display: none;
+}
+
+.ilink {
+    cursor: pointer;
+    /* color: blue; */
+    text-decoration: dashed underline var(--c2);
+    text-underline-offset: 3px;
+}
+.ilink:visited {
+    color: inherit;
+}
+
+/* exe mode */
+/* [data-launch-mode="exe"] :is(#btn_load_file, #btn_save_file, #btn_save_as_img) {
+    display: none;
+} */
+</style>
+<link href="custom.css" rel="stylesheet" />
+</head>
+
+<body>
+<div id="row_cap">
+    <div style="flex: 1;display: flex;align-self: center;">
+        <span id="btn_sidebar" class="btn_icon btn_chk BIND-CLICK" style="margin-left: 10px;" data-help="側邊欄 <- 鍵譜列表">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M0 0h24v24H0z"/><path fill="currentColor" d="M18 3a3 3 0 0 1 2.995 2.824L21 6v12a3 3 0 0 1-2.824 2.995L18 21H6a3 3 0 0 1-2.995-2.824L3 18V6a3 3 0 0 1 2.824-2.995L6 3zm0 2H9v14h9a1 1 0 0 0 .993-.883L19 18V6a1 1 0 0 0-.883-.993zm-2.293 4.293a1 1 0 0 1 .083 1.32l-.083.094L14.415 12l1.292 1.293a1 1 0 0 1 .083 1.32l-.083.094a1 1 0 0 1-1.32.083l-.094-.083l-2-2a1 1 0 0 1-.083-1.32l.083-.094l2-2a1 1 0 0 1 1.414 0"/></g></svg>
+        </span>
+        <div id="prof_name" class="prof prof_name prof_cur" style="margin: 0px 5px;"></div>
+    </div>
+    <span class="caption"></span>
+    <span class="slogan"> 
+    <span>&nbsp;</span>
+    </span>
+    <div id="ui_switch">
+        <span id="btn_ui_tab" class="btn_icon btn_icon_sm BIND-CLICK" data-help="分頁模式">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="var(--ui-bdc)" d="M11 3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8h-7.75A2.25 2.25 0 0 1 11 5.75zm10 3.5V6a3 3 0 0 0-3-3h-5.5v2.75c0 .414.336.75.75.75z"/></svg>
+        </span>
+        <span id="btn_ui_single" class="btn_icon btn_icon_sm BIND-CLICK" data-help="單頁模式">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="var(--ui-bdc)" d="M6.25 2A2.25 2.25 0 0 0 4 4.25v15.5A2.25 2.25 0 0 0 6.25 22h11.5A2.25 2.25 0 0 0 20 19.75V4.25A2.25 2.25 0 0 0 17.75 2zm1.5 4h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5M7 16.75a.75.75 0 0 1 .75-.75h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1-.75-.75M7.75 11h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5"/></svg>
+        </span>
+        <span class="slider"></span>
+    </div>
+    <span id="btn_save_as_img" class="btn_icon BIND-CLICK" data-help="截圖：生成單頁模式圖片" style="margin-left:5px;align-self: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.25 4C4.56 4 4 4.56 4 5.25V8a1 1 0 0 1-2 0V5.25A3.25 3.25 0 0 1 5.25 2H8a1 1 0 0 1 0 2zm0 16C4.56 20 4 19.44 4 18.75V16a1 1 0 1 0-2 0v2.75A3.25 3.25 0 0 0 5.25 22H8a1 1 0 1 0 0-2zM20 5.25C20 4.56 19.44 4 18.75 4H16a1 1 0 1 1 0-2h2.75A3.25 3.25 0 0 1 22 5.25V8a1 1 0 1 1-2 0zM18.75 20c.69 0 1.25-.56 1.25-1.25V16a1 1 0 1 1 2 0v2.75A3.25 3.25 0 0 1 18.75 22H16a1 1 0 1 1 0-2zM12 13a1 1 0 1 0 0-2a1 1 0 0 0 0 2m-1.152-6c-.473 0-.906.263-1.118.678L9.242 9h-.575C7.747 9 7 9.596 7 10.5v3.864C7 15.267 7.746 16 8.667 16h6.666c.92 0 1.667-.733 1.667-1.636V10.5c0-.904-.746-1.5-1.667-1.5h-.575l-.488-1.322A1.253 1.253 0 0 0 13.152 7zM12 14a2 2 0 1 1 0-4a2 2 0 0 1 0 4"/></svg>
+    </span>
+    <span style="margin-right: 10px"></span>
+</div>
+<div id="sidebar">
+    <div style="display: flex;margin-bottom: 10px;">
+        <span id="btn_size_s" class="btn_icon btn_icon_sm BIND-CLICK">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.707 4.293a1 1 0 0 1 0 1.414L9.414 12l6.293 6.293a1 1 0 0 1-1.414 1.414l-7-7a1 1 0 0 1 0-1.414l7-7a1 1 0 0 1 1.414 0"/></svg>
+        </span>
+        <span id="btn_size_b" class="btn_icon btn_icon_sm BIND-CLICK">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.293 4.293a1 1 0 0 0 0 1.414L14.586 12l-6.293 6.293a1 1 0 1 0 1.414 1.414l7-7a1 1 0 0 0 0-1.414l-7-7a1 1 0 0 0-1.414 0"/></svg>
+        </span>
+        <span style="flex: 1"></span>
+        <span id="btn_pin" class="btn_icon btn_icon_sm btn_chk BIND-CLICK">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21.068 7.758l-4.826-4.826a2.75 2.75 0 0 0-4.404.715l-2.435 4.87a.75.75 0 0 1-.426.374l-4.166 1.44a1.25 1.25 0 0 0-.476 2.065L7.439 15.5L3 19.94V21h1.06l4.44-4.44l3.105 3.105a1.25 1.25 0 0 0 2.065-.476l1.44-4.166a.75.75 0 0 1 .373-.426l4.87-2.435a2.75 2.75 0 0 0 .715-4.404"/></svg>
+        </span>
+    </div>
+    <div class="prof_list"></div>
+</div>
+<div id="row_name">
+    <span style="font-weight: bold;padding: 3px 10px;font-size:1rem;">鍵譜</span>
+    <span id="pname_keymap"></span>
+    <span class="layer" style="font-weight: bold;padding: 3px 0px;">- 層</span>
+    <span id="pname_layer" class="layer"></span>
+</div>
+<div id="row_tabbar">
+    <div style="flex: 1;display: flex;padding: 2px 0px;gap:2px;">
+        <!-- <span style="font-weight: bold;padding: 3px 10px;font-size:1rem;">鍵譜</span> -->
+        <span id="btn_new" class="btn_icon BIND-CLICK" style="margin-left: 10px;" data-help="新建鍵譜">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 5.75A2.75 2.75 0 0 1 5.75 3h12.5A2.75 2.75 0 0 1 21 5.75v6.272a6.463 6.463 0 0 0-2-.848V5.75a.75.75 0 0 0-.75-.75H5.75a.75.75 0 0 0-.75.75v12.5c0 .414.336.75.75.75h5.424c.17.72.46 1.395.848 2H5.75A2.75 2.75 0 0 1 3 18.25zM23 17.5a5.5 5.5 0 1 0-11 0a5.5 5.5 0 0 0 11 0m-5 .5l.001 2.503a.5.5 0 1 1-1 0V18h-2.505a.5.5 0 0 1 0-1H17v-2.5a.5.5 0 1 1 1 0V17h2.497a.5.5 0 0 1 0 1z"/></svg>
+        </span>
+        <span id="btn_load_file" class="btn_icon BIND-CLICK" data-help="從文件載入">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.25 3A3.25 3.25 0 0 0 2 6.25v8.912l2.045-3.541a4.25 4.25 0 0 1 3.68-2.125H20V8.75a3.25 3.25 0 0 0-3.25-3.25h-5.19L9.72 3.659A2.25 2.25 0 0 0 8.129 3zm2.475 7.996h13.02c1.732 0 2.814 1.875 1.948 3.375l-3.036 5.258a2.75 2.75 0 0 1-2.382 1.375H4.255c-1.731 0-2.814-1.875-1.948-3.375l3.037-5.258a2.75 2.75 0 0 1 2.381-1.375"/></svg>
+        </span>
+        <span id="btn_save_file" class="btn_icon BIND-CLICK" data-help="保存至文件">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.75 3h-1A2.75 2.75 0 0 0 3 5.75v12.5A2.75 2.75 0 0 0 5.75 21H6v-6a2.25 2.25 0 0 1 2.25-2.25h7.5A2.25 2.25 0 0 1 18 15v6h.25A2.75 2.75 0 0 0 21 18.25V8.286a3.25 3.25 0 0 0-.952-2.299l-2.035-2.035A3.25 3.25 0 0 0 15.75 3v4.5a2.25 2.25 0 0 1-2.25 2.25H9A2.25 2.25 0 0 1 6.75 7.5zm7.5 0v4.5a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75V3zm2.25 18v-6a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0-.75.75v6z"/></svg>
+        </span>
+        <span id="btn_saveas" class="btn_icon BIND-CLICK" data-help="另存為/複製到新鍵譜">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.5 12a5.5 5.5 0 1 1 0 11a5.5 5.5 0 0 1 0-11M5.503 4.627L5.5 6.75v10.504a3.25 3.25 0 0 0 3.25 3.25l2.985.001a6.521 6.521 0 0 0 1.08 1.5H8.75A4.75 4.75 0 0 1 4 17.254V6.75c0-.98.627-1.815 1.503-2.123m12.781 9.962a.5.5 0 0 0-.568 0l-.07.057l-.057.07a.5.5 0 0 0 0 .568l.057.07l1.646 1.645l-4.798.001l-.09.008a.5.5 0 0 0-.402.402l-.008.09l.008.09a.5.5 0 0 0 .402.402l.09.008l4.8-.001l-1.648 1.647l-.057.07a.5.5 0 0 0 .695.695l.07-.057l2.53-2.533l.036-.05l.042-.08l.026-.083l.01-.064v-.088l-.01-.064l-.011-.043l-.032-.078l-.024-.042l-.038-.05l-2.53-2.533zM17.75 2A2.25 2.25 0 0 1 20 4.25v7.248a6.5 6.5 0 0 0-8.687 8.002H8.75a2.25 2.25 0 0 1-2.25-2.25v-13A2.25 2.25 0 0 1 8.75 2z"/></svg>
+        </span>
+        <span style="border: 0px solid darkgray;border-left-width: 1px;margin:5px 5px;"></span>
+        <span id="btn_setting" class="btn_icon BIND-CLICK" data-help="鍵譜設置">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 2a5.5 5.5 0 0 0-5.348 6.789L2.841 17.1a2.871 2.871 0 1 0 4.06 4.06l4.115-4.113a6.5 6.5 0 0 1 9.172-5.467A5.486 5.486 0 0 0 22 7.5a5.51 5.51 0 0 0-.282-1.745a.75.75 0 0 0-1.242-.292l-2.444 2.444a.75.75 0 0 1-1.06 0l-.879-.878a.75.75 0 0 1 0-1.06l2.445-2.445a.75.75 0 0 0-.293-1.241A5.495 5.495 0 0 0 16.5 2m-2.223 11.976a2 2 0 0 1-1.441 2.496l-.584.144a5.728 5.728 0 0 0 .006 1.808l.54.13a2 2 0 0 1 1.45 2.51l-.187.631c.44.386.94.699 1.485.922l.493-.519a2 2 0 0 1 2.899 0l.499.525a5.277 5.277 0 0 0 1.482-.913l-.198-.686a2 2 0 0 1 1.442-2.496l.583-.144a5.729 5.729 0 0 0-.006-1.808l-.54-.13a2 2 0 0 1-1.449-2.51l.186-.63a5.282 5.282 0 0 0-1.484-.922l-.493.518a2 2 0 0 1-2.9 0l-.498-.525c-.544.22-1.044.53-1.483.912zM17.5 19c-.8 0-1.45-.672-1.45-1.5S16.7 16 17.5 16c.8 0 1.45.672 1.45 1.5S18.3 19 17.5 19"/></svg>
+        </span>
+        <span id="btn_rename" class="btn_icon BIND-CLICK" data-help="重命名鍵譜">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.75 2h3.998a.75.75 0 0 1 .102 1.493l-.102.007H12.5v17h1.246a.75.75 0 0 1 .743.648l.007.102a.75.75 0 0 1-.648.743l-.102.007H9.75a.75.75 0 0 1-.102-1.493l.102-.007h1.249v-17H9.75a.75.75 0 0 1-.743-.648L9 2.75a.75.75 0 0 1 .648-.743zm8.496 2.997a3.253 3.253 0 0 1 3.25 3.25l.004 7.504a3.249 3.249 0 0 1-3.064 3.246l-.186.005h-4.745V4.996zm-8.249 0L9.992 19H5.25A3.25 3.25 0 0 1 2 15.751V8.247a3.25 3.25 0 0 1 3.25-3.25z"/></svg>
+        </span>
+        <span id="btn_clr" class="btn_icon danger BIND-CLICK" data-help="清空鍵譜">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m15.87 2.669l4.968 4.968a2.25 2.25 0 0 1 0 3.182l-8.682 8.68l6.098.001a.75.75 0 0 1 .743.648l.007.102a.75.75 0 0 1-.648.743l-.102.007l-8.41.001a2.244 2.244 0 0 1-1.714-.655l-4.969-4.969a2.25 2.25 0 0 1 0-3.182l9.527-9.526a2.25 2.25 0 0 1 3.182 0m-4.172 15.09l-5.955-5.956l-1.507 1.467a.75.75 0 0 0 0 1.06l4.946 4.946a.75.75 0 0 0 1.06-.016z"/></svg>
+        </span>
+        <span id="btn_del" class="btn_icon danger BIND-CLICK" data-help="刪除鍵譜">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 0-.75.75v7.5a.75.75 0 0 0 1.5 0v-7.5a.75.75 0 0 0-.75-.75"/></svg>
+        </span>
+        <span style="border: 0px solid darkgray;border-left-width: 1px;margin:5px 5px;"></span>
+        <a class="btn_icon" href="https://github.com/cataerogong/keymap/tree/master/keymaps" target="_blank" data-help="網友製作分享的“鍵譜”">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3.002a2.998 2.998 0 1 1-2.148 5.09l-5.457 3.12a3.002 3.002 0 0 1 0 1.577l5.458 3.119a2.998 2.998 0 1 1-.746 1.304l-5.457-3.12a2.998 2.998 0 1 1 0-4.184l5.457-3.12A3 3 0 0 1 17 3.003"/></svg>
+        </a>
+        <span id="btn_help" class="btn_icon BIND-CLICK" data-help="幫助">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v.01M12 13a2 2 0 0 0 .914-3.782a1.98 1.98 0 0 0-2.414.483"/></svg>
+        </span>
+        <span style="flex: 1;">&nbsp;</span>
+    </div>
+    <span id="tabbtn_kb" class="tabbtn BIND-CLICK">鍵圖</span>
+    <span id="tabbtn_list" class="tabbtn BIND-CLICK">鍵表</span>
+    <span id="tabbtn_json" class="tabbtn BIND-CLICK">數據</span>
+    <span>&nbsp;</span>
+</div>
+<div id="row_op_btns">
+    <div id="kb_ops">
+        <span>&nbsp;</span>
+        <span>鍵盤層:</span>
+        <div id="layer_btns"></div>
+        <span>&nbsp;</span>
+        <button id="btn_l_clr" class="btn rnd danger BIND-CLICK">清空本層</button>
+        <span id="btn_layout" class="btn_icon btn_chk BIND-CLICK" data-help="Mac 鍵盤佈局">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 18 18"><path d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516s1.52.087 2.475-1.258s.762-2.391.728-2.43m3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422s1.675-2.789 1.698-2.854s-.597-.79-1.254-1.157a3.7 3.7 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116c-.508.139-1.653.589-1.968.607c-.316.018-1.256-.522-2.267-.665c-.647-.125-1.333.131-1.824.328c-.49.196-1.422.754-2.074 2.237c-.652 1.482-.311 3.83-.067 4.56s.625 1.924 1.273 2.796c.576.984 1.34 1.667 1.659 1.899s1.219.386 1.843.067c.502-.308 1.408-.485 1.766-.472c.357.013 1.061.154 1.782.539c.571.197 1.111.115 1.652-.105c.541-.221 1.324-1.059 2.238-2.758q.52-1.185.473-1.282"/></svg>
+        </span>
+        <span id="btn_hint" class="btn_icon btn_chk BIND-CLICK" data-help="鍵帽提示">
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4.25 4A2.25 2.25 0 0 0 2 6.25v2.5A2.25 2.25 0 0 0 4.25 11h2.5A2.25 2.25 0 0 0 9 8.75v-2.5A2.25 2.25 0 0 0 6.75 4zm7 1a.75.75 0 0 0 0 1.5h10a.75.75 0 0 0 0-1.5zm0 3a.75.75 0 0 0 0 1.5h7a.75.75 0 0 0 0-1.5zm-7 5A2.25 2.25 0 0 0 2 15.25v2.5A2.25 2.25 0 0 0 4.25 20h2.5A2.25 2.25 0 0 0 9 17.75v-2.5A2.25 2.25 0 0 0 6.75 13zm7 1a.75.75 0 0 0 0 1.5h10a.75.75 0 0 0 0-1.5zm0 3a.75.75 0 0 0 0 1.5h7a.75.75 0 0 0 0-1.5z"/></svg> -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.25 10.5a.75.75 0 0 1 .743.648l.007.102v8.5a2.25 2.25 0 0 1-2.096 2.245L19.75 22h-2a.75.75 0 0 1-.102-1.493l.102-.007h2a.75.75 0 0 0 .743-.648l.007-.102v-8.5a.75.75 0 0 1 .75-.75m0-8.5l.07.003l.101.017l.068.019l.06.023l.07.035l.082.054l.08.07l.051.056l.045.062l.05.09l.017.037l.024.066c.011.037.02.076.025.116L22 2.75v5a.75.75 0 0 1-1.493.102L20.5 7.75V4.56l-4.47 4.47a.75.75 0 0 1-1.133-.976l.073-.084l4.468-4.47H16.25a.75.75 0 0 1-.743-.648L15.5 2.75a.75.75 0 0 1 .648-.743L16.25 2zm-8 8.5a2.25 2.25 0 0 1 2.245 2.096l.005.154v7a2.25 2.25 0 0 1-2.096 2.245L13.25 22h-9a2.25 2.25 0 0 1-2.245-2.096L2 19.75v-7a2.25 2.25 0 0 1 2.096-2.245l.154-.005zm-2.5 7h-4c-.41 0-.75.37-.75.75s.282.694.648.743L6.75 19h4c.41 0 .75-.37.75-.75a.75.75 0 0 0-.648-.743zM6 13.5a1 1 0 1 0 0 2a1 1 0 0 0 0-2m5.5 0a1 1 0 1 0 0 2a1 1 0 0 0 0-2m-2.75 0a1 1 0 1 0 0 2a1 1 0 0 0 0-2m4-11.5a.75.75 0 0 1 .102 1.493l-.102.007h-8.5a.75.75 0 0 0-.743.648L3.5 4.25v4a.75.75 0 0 1-1.493.102L2 8.25v-4a2.25 2.25 0 0 1 2.096-2.245L4.25 2z"/></svg>
+        </span>
+        <span id="btn_list_by" class="btn_icon btn_chk BIND-CLICK" data-help="按分組顯示">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m3.001 11.996l3 .004a1 1 0 0 1 .114 1.993L6 14l-2-.004v5.003L6 19a1 1 0 0 1 .993.883L7 20a1 1 0 0 1-.883.993L6 21H3a1 1 0 0 1-.993-.883L2 20v-7.004a1 1 0 0 1 .885-.994zM21 17a1 1 0 0 1 .117 1.993L21 19H9a1 1 0 0 1-.117-1.993L9 17zm0-3a1 1 0 0 1 .117 1.993L21 16H9a1 1 0 0 1-.117-1.993L9 14zM6 2a1 1 0 0 1 .117 1.993L6 4H4v4.995h2a1 1 0 0 1 .993.883L7 9.995a1 1 0 0 1-.883.993L6 10.995H3a1 1 0 0 1-.993-.883L2 9.995V3a1 1 0 0 1 .883-.993L3 2zm15 5a1 1 0 0 1 .117 1.993L21 9H9a1 1 0 0 1-.117-1.993L9 7zm0-3a1 1 0 0 1 .117 1.993L21 6H9a1 1 0 0 1-.117-1.993L9 4z"/></svg>
+        </span>
+        <span id="btn_multi_ops" class="btn_icon" style="position: relative;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="m8 9.076l.085-.107a.751.751 0 1 0-1.171-.937L5.438 9.877L5.03 9.47a.747.747 0 0 0-1.06 0a.75.75 0 0 0 0 1.06l.407.408l.593.592a.75.75 0 0 0 1.116-.061l.522-.654h.001L8 9.074Z"/><path fill-rule="evenodd" d="M12 11a3 3 0 0 0 3-3V4a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v1H4a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3v-1zM4 6.5A1.5 1.5 0 0 0 2.5 8v4A1.5 1.5 0 0 0 4 13.5h4A1.5 1.5 0 0 0 9.5 12V8A1.498 1.498 0 0 0 8 6.5zM13.5 4A1.5 1.5 0 0 0 12 2.5H8A1.5 1.5 0 0 0 6.5 4v1H8a3 3 0 0 1 3 3v1.5h1A1.498 1.498 0 0 0 13.5 8z" /></svg>
+            <div id="lst_multi_ops">
+                <span style="color: gray;">批量操作</span>
+                <div id="btn_del_shortcuts" class="btn BIND-CLICK">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.47 3.47a.75.75 0 0 1 1.06 0L8 6.94l3.47-3.47a.75.75 0 1 1 1.06 1.06L9.06 8l3.47 3.47a.75.75 0 1 1-1.06 1.06L8 9.06l-3.47 3.47a.75.75 0 0 1-1.06-1.06L6.94 8L3.47 4.53a.75.75 0 0 1 0-1.06" /></svg>
+                    刪除
+                </div>
+                <div id="btn_set_group" class="btn BIND-CLICK">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 7h4v2h-4v6h2v-4h2v4a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm2 0v14h14V5z"/></svg>
+                    分組
+                </div>
+            </div>
+        </span>
+        <span style="flex: 1;">&nbsp;</span>
+    </div>
+    <div id="json_ops">
+        &nbsp;JSON 數據隨上圖設置實時更新。也可在下方編輯 JSON 數據後：
+        <button id="btn_imp" class="btn rnd BIND-CLICK" style="margin: 2px;">導入至當前鍵譜</button>
+        <button id="btn_imp2" class="btn rnd BIND-CLICK" style="margin: 2px;">導入至新鍵譜</button>
+        <button id="btn_present_js" class="btn rnd BIND-CLICK" style="margin: 2px;" data-help='用於“演示模式”'>導出 "present.js" 文件</button>
+    </div>
+</div>
+<div id="tab_kb" class="tab">
+    <!-- <div> -->
+        <keyboard id="kb_std">
+            <kb_pc>
+                <kb_main>
+                    <kr class="Fn">
+                        <k>Esc</k><d> </d><k>F1</k><k>F2</k><k>F3</k><k>F4</k><d> </d><k>F5</k><k>F6</k><k>F7</k><k>F8</k><d> </d><k>F9</k><k>F10</k><k>F11</k><k>F12</k>
+                    </kr>
+                    <div></div>
+                    <kr>
+                        <k>`</k><k>1</k><k>2</k><k>3</k><k>4</k><k>5</k><k>6</k><k>7</k><k>8</k><k>9</k><k>0</k><k>-</k><k>=</k><k class="k2">Backspace</k>
+                    </kr>
+                    <kr>
+                        <k class="k15">Tab</k><k>Q</k><k>W</k><k>E</k><k>R</k><k>T</k><k>Y</k><k>U</k><k>I</k><k>O</k><k>P</k><k>[</k><k>]</k><k class="k15">\</k>
+                    </kr>
+                    <kr>
+                        <k class="k2">Caps</k><k>A</k><k>S</k><k>D</k><k>F</k><k>G</k><k>H</k><k>J</k><k>K</k><k>L</k><k>;</k><k>'</k><k class="k2">Enter</k>
+                    </kr>
+                    <kr>
+                        <k class="k25">Shift</k><k>Z</k><k>X</k><k>C</k><k>V</k><k>B</k><k>N</k><k>M</k><k>,</k><k>.</k><k>/</k><k class="k25">RShift</k>
+                    </kr>
+                    <kr>
+                        <k class="k15">Ctrl</k><k class="k15">Win</k><k class="k15">Alt</k>
+                        <k class="kspace">Space</k>
+                        <k class="k15">RAlt</k><k class="k15">Menu</k><k class="k15">RCtrl</k>
+                    </kr>
+                </kb_main>
+                <kb_dir>
+                    <kr>
+                        <k>PrtScr</k><k>ScrLck</k><k>Pause</k>
+                    </kr>
+                    <kr></kr>
+                    <kr>
+                        <k>Ins</k><k>Home</k><k>PgUp</k>
+                    </kr>
+                    <kr>
+                        <k>Del</k><k>End</k><k>PgDn</k>
+                    </kr>
+                    <kr> </kr>
+                    <kr>
+                        <d> </d><k>Up</k><d> </d>
+                    </kr>
+                    <kr>
+                        <k>Left</k><k>Down</k><k>Right</k>
+                    </kr>
+                </kb_dir>
+                <kb_num>
+                    <k>NumLck</k><k>Num/</k><k>Num*</k><k>Num-</k>
+                    <k>Num7</k><k>Num8</k><k>Num9</k><k class="k2v">Num+</k>
+                    <k>Num4</k><k>Num5</k><k>Num6</k>
+                    <k>Num1</k><k>Num2</k><k>Num3</k><k class="k2v">REnter</k>
+                    <k class="k2h">Num0</k><k>Num.</k>
+                </kb_num>
+            </kb_pc>
+            <kb_mac>
+                <kb_main>
+                    <kr>
+                        <k class="kspace">esc</k><k>F1</k><k>F2</k><k>F3</k><k>F4</k><k>F5</k><k>F6</k><k>F7</k><k>F8</k><k>F9</k><k>F10</k><k>F11</k><k>F12</k><d class="k"> </d>
+                    </kr>
+                    <kr>
+                        <k>`</k><k>1</k><k>2</k><k>3</k><k>4</k><k>5</k><k>6</k><k>7</k><k>8</k><k>9</k><k>0</k><k>-</k><k>=</k><k class="k15">del</k>
+                    </kr>
+                    <kr>
+                        <k class="k15">tab</k><k>Q</k><k>W</k><k>E</k><k>R</k><k>T</k><k>Y</k><k>U</k><k>I</k><k>O</k><k>P</k><k>[</k><k>]</k><k>\</k>
+                    </kr>
+                    <kr>
+                        <k class="kspace">caps</k><k>A</k><k>S</k><k>D</k><k>F</k><k>G</k><k>H</k><k>J</k><k>K</k><k>L</k><k>;</k><k>'</k><k class="kspace">return</k>
+                    </kr>
+                    <kr>
+                        <k class="kspace">shift</k><k>Z</k><k>X</k><k>C</k><k>V</k><k>B</k><k>N</k><k>M</k><k>,</k><k>.</k><k>/</k><k class="kspace">r-shift</k>
+                    </kr>
+                    <kr>
+                        <k class="k15">ctrl</k><k class="k13">opt</k><k class="k15">cmd</k>
+                        <k class="kspace">Space</k>
+                        <k class="k15">r-cmd</k><k class="k13">r-opt</k><k class="k15">r-ctrl</k>
+                    </kr>
+                </kb_main>
+                <kb_dir>
+                    <kr>
+                        <k>F13</k><k>F14</k><k>F15</k>
+                    </kr>
+                    <kr>
+                        <k>fn</k><k>home</k><k>pgup</k>
+                    </kr>
+                    <kr>
+                        <k>fwd-del</k><k>end</k><k>pgdn</k>
+                    </kr>
+                    <kr> </kr>
+                    <kr>
+                        <d> </d><k>Up</k><d> </d>
+                    </kr>
+                    <kr>
+                        <k>Left</k><k>Down</k><k>Right</k>
+                    </kr>
+                </kb_dir>
+                <kb_num>
+                    <k>F16</k><k>F17</k><k>F18</k><k>F19</k>
+                    <k>clear</k><k>Num=</k><k>Num/</k><k>Num*</k>
+                    <k>Num7</k><k>Num8</k><k>Num9</k><k>Num-</k>
+                    <k>Num4</k><k>Num5</k><k>Num6</k><k>Num+</k>
+                    <k>Num1</k><k>Num2</k><k>Num3</k><k class="k2v">enter</k>
+                    <k class="k2h">Num0</k><k>Num.</k>
+                </kb_num>
+            </kb_mac>
+        </keyboard>
+        <keyboard id="kb_ext"></keyboard>
+        <textarea id="comment" placeholder="在這裡輸入備註信息。(C 顯示 / Shift+C 隱藏)"></textarea>
+        <div id="pcomment" title="“雙擊”編輯備註"></div>
+    <!-- </div> -->
+</div>
+<div id="tab_list" class="tab">
+    <div id="mods"></div>
+    <div id="list"></div>
+</div>
+<div id="tab_json" class="tab">
+    <textarea id="json"></textarea>
+</div>
+<div class="about"></div>
+
+<script>
+const KEY_TABLE_COMMON = {
+    // "0": [''], "1": [''], "2": [''], "3": [''], "4": [''], "5": [''], "6": [''], "7": [''], "8": [''], "9": [''],
+    // "A": [''], "B": [''], "C": [''], "D": [''], "E": [''], "F": [''], "G": [''], "H": [''], "I": [''], "J": [''],
+    // "K": [''], "L": [''], "M": [''], "N": [''], "O": [''], "P": [''], "Q": [''], "R": [''], "S": [''], "T": [''],
+    // "U": [''], "V": [''], "W": [''], "X": [''], "Y": [''], "Z": [''],
+    // ";": [''], "=": [''], ",": [''], "-": [''], ".": [''], "/": [''], "`": [''], "[": [''], "\\": [''], "]": [''], "'": [''],
+    // "F1": [''], "F2": [''], "F3": [''], "F4": [''], "F5": [''], "F6": [''], "F7": [''], "F8": [''], "F9": [''], "F10": [''], "F11": [''], "F12": [''],
+    // "Alt": [''], "RAlt": [''], "Backspace": [''], "Caps": [''], "Ctrl": [''], "RCtrl": [''], "Del": [''], "Down": ['↓'], "End": [''], "Enter": [''], "REnter": [''], "Esc": [''],
+    // "Home": [''], "Ins": [''], "Left": ['←'], "Menu": [''], "Pause": [''], "PgDn": [''], "PgUp": [''], "PrtScr": [''], "Right": ['→'],
+    // "ScrLck": [''], "Shift": [''], "RShift": [''], "Space": [''], "Tab": [''], "Up": ['↑'], "Win": [''],
+    // "NumLck": [''], "Num-": ['-'], "Num*": ['*'], "Num.": ['.'], "Num/": ['/'], "Num+": ['+'],
+    // "Num0": ['0'], "Num1": ['1'], "Num2": ['2'], "Num3": ['3'], "Num4": ['4'], "Num5": ['5'], "Num6": ['6'], "Num7": ['7'], "Num8": ['8'], "Num9": ['9'],
+    // // "F13": [''], "F14": [''], "F15": [''], "F16": [''], "F17": [''], "F18": [''], "F19": [''], "F20": [''], "F21": [''], "F22": [''], "F23": [''], "F24": [''], "F25": [''], "F26": [''], "F27": [''], "F28": [''], "F29": [''], "F30": [''],
+    // // "LB": [''], "RB": [''], "MB": [''], "WhlUp": [''], "WhlDn": [''],
+    "0": '', "1": '', "2": '', "3": '', "4": '', "5": '', "6": '', "7": '', "8": '', "9": '',
+    "A": '', "B": '', "C": '', "D": '', "E": '', "F": '', "G": '', "H": '', "I": '', "J": '',
+    "K": '', "L": '', "M": '', "N": '', "O": '', "P": '', "Q": '', "R": '', "S": '', "T": '',
+    "U": '', "V": '', "W": '', "X": '', "Y": '', "Z": '',
+    ";": '', "=": '', ",": '', "-": '', ".": '', "/": '', "`": '', "[": '', "\\": '', "]": '', "'": '',
+    "F1": '', "F2": '', "F3": '', "F4": '', "F5": '', "F6": '', "F7": '', "F8": '', "F9": '', "F10": '', "F11": '', "F12": '',
+    "Up": '↑', "Down": '↓', "Left": '←', "Right": '→',
+    "NumLck": '', "Num-": '-', "Num*": '*', "Num.": '.', "Num/": '/', "Num+": '+',
+    "Num0": '0', "Num1": '1', "Num2": '2', "Num3": '3', "Num4": '4', "Num5": '5', "Num6": '6', "Num7": '7', "Num8": '8', "Num9": '9',
+    "Space": '',
+    // "F13": '', "F14": '', "F15": '', "F16": '', "F17": '', "F18": '', "F19": '', "F20": '', "F21": '', "F22": '', "F23": '', "F24": '', "F25": '', "F26": '', "F27": '', "F28": '', "F29": '', "F30": '',
+    // "LB": '', "RB": '', "MB": '', "WhlUp": '', "WhlDn": '', 
+};
+const KEY_TABLE_PC = Object.assign({}, KEY_TABLE_COMMON, {
+    "Esc": '', "Tab": '', "Shift": '', "RShift": '', "Backspace": '', "Caps": '', "Enter": '', "REnter": '',
+    "Ins": '', "Del": '',  "Home": '', "End": '', "PgUp": '', "PgDn": '',
+    "Alt": '', "RAlt": '', "Ctrl": '', "RCtrl": '', "Win": '', "Menu": '',
+    "PrtScr": '', "ScrLck": '', "Pause": '',
+});
+const KEY_TABLE_MAC = Object.assign({}, KEY_TABLE_COMMON, {
+    "esc": '', "del": 'delete', "tab": '', "caps": 'caps lock', "return": '', "shift": '', "r-shift": '',
+    "ctrl": 'control', "opt": 'option', "cmd": 'command', "r-ctrl": 'r-control', "r-opt": 'r-option', "r-cmd": 'r-command',
+    "fn": '', "home": '', "end": '', "pgup": 'page up', "pgdn": 'page down', "fwd-del": '[x&gt;',
+    "clear": '', "enter": '', "Num=": '=',
+    "F13": '', "F14": '', "F15": '', "F16": '', "F17": '', "F18": '', "F19": '', 
+});
+const KEY_TABLE_ALL = Object.assign({}, KEY_TABLE_COMMON, KEY_TABLE_PC, KEY_TABLE_MAC);
+const MODKEYS_PC = ["Alt", "Ctrl", "Shift", "Win", "RAlt", "RCtrl", "RShift"];
+const MODKEYS_MAC = ["opt", "ctrl", "shift", "cmd", "r-opt", "r-ctrl", "r-shift", "r-cmd", "fn"];
+const MODKEY_COLORS = {
+    "Alt": "#e53935",
+    "Ctrl": "#00c853",
+    "Shift": "#1976d2",
+    "Win": "#7c4dff",
+    "RAlt": "#e53935/",
+    "RCtrl": "#00c853/",
+    "RShift": "#1976d2/",
+    "opt": "#e53935",
+    "ctrl": "#00c853",
+    "shift": "#1976d2",
+    "cmd": "#7c4dff",
+    "r-opt": "#e53935/",
+    "r-ctrl": "#00c853/",
+    "r-shift": "#1976d2/",
+    "r-cmd": "#7c4dff/",
+    "fn": "#ffc400"
+};
+const MODKEY_CHARS = {
+    "Alt": "A",
+    "Ctrl": "C",
+    "Shift": "S",
+    "Win": "W",
+    "RAlt": "a",
+    "RCtrl": "c",
+    "RShift": "s",
+    "opt": "o",
+    "ctrl": "c",
+    "shift": "s",
+    "cmd": "m",
+    "r-opt": "O",
+    "r-ctrl": "C",
+    "r-shift": "S",
+    "r-cmd": "M",
+    "fn": "f"
+};
+const KEY_GROUPS = {
+    "g1": "#ACE1AF",
+    "g2": "#F7CAC9",
+    "g3": "#E7E28C",
+    "g4": "#BFBD50",
+    "g5": "#DCAE96",
+    "g6": "#FAA052",
+    "g7": "#8ED449",
+    "g8": "#F2CB07",
+    "g9": "#BBBBBB",
+};
+
+var Util = {
+    setFlag(name, value) {
+        if (value === null)
+            document.documentElement.removeAttribute("data-" + name);
+        else
+            document.documentElement.setAttribute("data-" + name, value);
+    },
+
+    toggleFlag(name, value) {
+        if (document.documentElement.getAttribute("data-" + name))
+            document.documentElement.removeAttribute("data-" + name);
+        else
+            document.documentElement.setAttribute("data-" + name, value);
+    },
+
+    setCSS(prop, val) {
+        if (!prop || !val) return false;
+        for (const sheet of document.styleSheets) {
+            for (const rule of sheet.cssRules) {
+                if (rule.selectorText === ":root") {
+                    rule.style.setProperty(prop, val);
+                    return true;
+                }
+            }
+        }
+        document.styleSheets[document.styleSheets.length - 1].insertRule(`:root {${prop}: ${val}}`);
+        return true;
+    },
+
+    getCSS(prop) {
+        if (!prop) return null;
+        for (const sheet of document.styleSheets) {
+            for (const rule of sheet.cssRules) {
+                if (rule.selectorText === ":root") {
+                    return rule.style.getPropertyValue(prop);
+                }
+            }
+        }
+        return null;
+    },
+
+    split_combo(combo_str) {
+        let l = combo_str.replaceAll("Num+", "NumPlus").replaceAll("+", "_+_").replaceAll("NumPlus", "Num+").split("_+_");
+        let mk = l.pop();
+        l.sort();
+        l.push(mk);
+        return l;
+    },
+
+    get_mainkey(combo_str) {
+        let l = this.split_combo(combo_str);
+        return l[l.length - 1];
+    },
+
+    normalize_combo(combo_str) {
+        return Util.split_combo(combo_str).join("+");
+    },
+
+    between(v, min, max) {
+        return (v < min) ? min : ((v > max) ? max : v);
+    },
+
+    is_empty_obj(obj) {
+        for (const v in obj) return false;
+        return true;
+    },
+
+    patch_obj(dst, src) {
+        for (const k in src) {
+            if (!(k in dst))
+                dst[k] = src[k];
+        }
+    },
+
+    gen_combo_kn_elm(kn, group_color = true, mod_color = true, checkbox = false) {
+        let ck = this.split_combo(kn);
+        let mk = ck.pop();
+        let l = [];
+        for (const k of ck) {
+            if (mod_color) {
+                let clr = Keymap.getModColor(k) || ["transparent", "transparent"];
+                l.push(`<kn data-k="${k}" class="ck mod_color" style="${clr[0]?'--mod-c1:'+clr[0]+';':''}${clr[1]?'--mod-c2:'+clr[1]+';':''}">${k}</kn>`);
+            } else {
+                l.push(`<kn data-k="${k}" class="ck">${k}</kn>`);
+            }
+        }
+        // group color
+        let g = "";
+        let c = "";
+        let mi = Keymap.getMapping(kn);
+        if (mi.group && group_color) {
+            g += " group";
+            c = `--gc: ${Keymap.getGroupColor(mi.group)};`;
+        }
+        if (mi.is_main) {
+            g += " is_main";
+        }
+        let s = "";
+        if (l.length) {
+            s = `<span class="modkeys">` + l.join("") + `</span>`;
+        }
+        s += `<kn data-k="${mk}" class="mk">${mk}</kn>`;
+        return `<kcombo data-mainkey="${mk}" data-combo="${kn}" class="f-end ${g}" style="${c}" title="點擊修改">${s}</kcombo>
+            ${checkbox?"<input type='checkbox' data-combo='"+kn+"' />":"<span></span>"}
+            <kinfo data-mainkey="${mk}" data-combo="${kn}">${mi.body}</kinfo>`;
+    },
+
+    parseVersion(v) {
+        let s = v.trim().split(/[\.\-]+/);
+        for (let i=0; i<s.length; i++) {
+            s[i] = Number.isNaN(Number(s[i].trim())) ? s[i] : Number(s[i].trim());
+        }
+        return s;
+    },
+
+    formalizeText(text) {
+        let ret = text;
+        // // 處理 "<"
+        // ret = ret.replaceAll("<", "&lt;").replace(">", "&gt;");
+        // 處理內部超鏈 "[文字](Ln)", "[文字](Ln,A+B+C)"
+        function replacer(match, p1, p2, p3, p4, p5, offset, string, groups) {
+            let ln = "";
+            try {
+                ln = Keymap.getLayerName(parseInt(groups.layer));
+            } catch {
+            }
+            let txt = "L" + groups.layer + (ln ? ":" + ln : "") + (groups.combo ? "&lt;" + groups.combo + "&gt;" : "");
+            let js = `UI.Keyboard.clearTips();UI.changeLayer(${groups.layer});UI.update();` + (groups.combo ? `UI.setMapping('${groups.combo}');` : "");
+            return `<a class="ilink ${groups.combo ? "key" : "layer"}" onclick="${js}" title="（內鏈）${groups.link}">${groups.text || txt}</a>`
+        }
+        ret = ret.replaceAll(/\[(?<text>[^\]\r\n]*)\]\((?<link>L(?<layer>\d+)(\s*,\s*(?<combo>[^\)\r\n]+))?)\)/g, replacer);
+        // 處理超鏈 "[文字](鏈接)"
+        function replacer2(match, p1, p2, offset, string, groups) {
+            return `<a class="ilink link" href="${groups.link}" target="_blank" title="（外鏈）${groups.link}">${groups.text || groups.link}</a>`
+        }
+        ret = ret.replaceAll(/\[(?<text>[^\]\r\n]*)\]\((?<link>\S+)\)/g, replacer2);
+        return ret;
+    }
+};
+
+const NEW_KEYMAP = "+ 新建";
+const HELP_KEYMAP = "* 幫助";
+const HELP = `【幫助】
+  * 點擊頂部的“鍵譜名”，可以切換鍵譜。
+  * 點擊鍵盤圖中的按鍵，可以錄入快捷鍵信息。
+  * 組合鍵：在錄入時可以選擇組合修飾鍵（Alt、Ctrl、Shift、Win ...）。
+  * 一個按鍵上可以錄入多組快捷鍵。
+  * 可以自定義擴展鍵、修飾鍵。
+  * 可以設置鍵盤層數，無上限（嗯，大概吧），可以自定義鍵盤層名。
+  * 每個鍵譜的當前狀態都會實時保存（除了“當前鍵盤層”），在下次打開時會自動恢復。因此，可以為每個鍵譜設置不同的顯示風格。
+
+>>> 按"1"或點擊頂部的“1:鍵譜的快捷鍵”切換至“鍵譜的快捷鍵”
+
+【譜匣】通過譜匣程序使用鍵譜時，可以使用命令行參數自定義載入的鍵譜及界面。不需提供所有參數，未提供的參數會按鍵譜中保存的狀態顯示。
+  -P 鍵譜名
+  -L 鍵盤層 : [0~9]
+  -V 視圖 : [k/l/j] 鍵圖 / 鍵表 / 數據
+  -S 主鍵盤大小 : [0~3] 隱藏 / 60% / 80% / 標準
+  -X 擴展鍵盤 ：[0/1] 關閉 / 打開
+  -H 鍵帽提示 : [0/1] 關閉 / 打開
+  -M 界面模式 : [t/s] 分頁 / 單頁
+  示例：打開鍵譜“Photoshop”，切換到層2，顯示鍵圖，60%鍵盤大小，關閉擴展鍵盤，打開鍵帽提示，單頁模式。
+    keymap.exe -P Photoshop -L 2 -V k -S 1 -X 0 -H 1 -M s
+`;
+const HELP1 = `這裡是鍵譜應用的“鍵譜”(^_^)，記錄、展示本應用的快捷鍵。
+同時，這是一個虛擬的鍵譜，你可以在這裡試驗各種操作，重新載入“${HELP_KEYMAP}”即可恢復原樣。
+
+【提示】請先按物理鍵盤的"Tab"、"X"鍵，將鍵譜界面調整到合適的狀態
+
+* 鼠標指向各個按鍵可以看到該鍵上的所有快捷鍵
+
+* 鍵帽提示：按 Tab 開啟
+  在鍵帽上顯示快捷鍵，以及快捷鍵信息的第一行文字
+
+* 鍵盤佈局：按 m / Shift+m 切換佈局
+  PC 和 Mac 有些鍵是不同的，基本上除字母鍵、Fn鍵以外的都不同。
+
+* 篩選：
+  * 右鍵點擊按鍵，可以篩選包含該鍵的快捷鍵
+  * 按住 \"Ctrl\" 可同時選擇多個鍵進行篩選，結果為同時包含這些鍵的快捷鍵
+
+【備註】這裡是備註框，可以為每個鍵盤層備註信息，鼠標雙擊進行編輯。
+`;
+// * 所有映射：按 f / Shift+f 開關
+//   顯示/隱藏 包含“非本鍵盤按鍵”的映射信息
+//   當組合鍵中包含有“非本鍵盤按鍵”時，受本開關控制。
+//   受影響：鍵表 / 映射信息設置時的修飾鍵列表 / 指向按鍵時顯示的映射信息
+const HELP2 = `一些進階小技巧
+
+【注意】
+* 鍵名：每個按鍵唯一的名字，一般與鍵帽上顯示的一致，但為了顯示效果，有些鍵名會和鍵帽上不一致（如方向鍵）
+* 鍵名區分大小寫（就是說 Tab 和 tab 是兩個不同的鍵名）
+* 獲取鍵名：點擊按鍵，在彈出的快捷鍵設置對話框中，最右邊的按鍵名就是鍵名
+
+【擴展鍵盤】鼠標、定製小鍵盤、遊戲手柄……只要是按鍵，都可以擴展
+  * 擴展鍵名以英文逗號(,)分隔
+  * 以 "#" 開頭的會顯示為純文字而非按鍵，單個 "#" 會顯示一個鍵位大小的空白
+  * 支持換行，每行代表一行擴展鍵，不含擴展鍵的行會忽略（空行或只有逗號的行）
+
+【自定義修飾鍵】程序用 Caps 作為快捷鍵的修飾鍵？沒問題
+  * 修飾鍵名以英文逗號(,)分隔
+  * 支持使用擴展鍵作為修飾鍵
+
+【分組】
+  * 鍵帽會顯示鍵帽上快捷鍵的分組顏色，沒有主快捷鍵或未分組的鍵帽不變色
+  * 鍵表中不按分組顯示時，快捷鍵上會有分組色的小顏色塊
+  * 分組顏色及組名："g1::顏色值1::組名1, g2::顏色值2::組名2, ..."
+    組名可以沒有，會顯示前面的 g1、g2 ...
+
+【顯示在鍵帽上的快捷鍵信息】
+  * 主快捷鍵：可以對每個按鍵設置某個快捷鍵為主快捷鍵
+  * 如果用戶沒有篩選修飾鍵，優先顯示主快捷鍵，如果沒有主快捷鍵，則顯示單鍵（無修飾鍵）的快捷鍵，如果單鍵也沒有，但快捷鍵只有一組，則顯示這個快捷鍵，如果不止一組，則不顯示，只高亮
+  * 如果篩選了修飾鍵，就顯示包含修飾鍵的快捷鍵，如果沒有包含的，就不顯示，如果有多條，優先顯示完全匹配的那條，沒有完全匹配的，顯示第一條匹配的
+
+【顯示在鍵帽上的修飾鍵】
+  * 鍵帽上顯示快捷鍵時，修飾鍵會同時顯示在鍵帽上
+  * 鍵帽上修飾鍵的顯示模式有三種：
+    * 鍵名：修飾鍵的鍵名
+    * 縮寫：鍵名的縮寫，一般為一個字母
+    * 僅顏色：啟用修飾鍵顏色後，顯示修飾鍵對應顏色的小方塊
+  * 自定義縮寫：鍵名1::縮寫1, 鍵名2::縮寫2, ...
+    對未設置縮寫的修飾鍵，默認為鍵名首字母
+  * 自定義顏色：鍵名1::顏色1, 鍵名2::顏色2, ...
+    顏色支持兩種格式：顏色值，左上顏色值/右下顏色值
+    * 單色格式：
+      整個修飾鍵一種背景色
+    * 雙色格式：
+      修飾鍵的背景色由 左上/右下 兩個顏色組合，各佔 50%
+      顏色可以為空，為空部分為白色，且佔比縮小為 20%
+  * 啟用修飾鍵顏色後，所有修飾鍵顯示均會使用定義的背景顏色
+    對未設置顏色的修飾鍵，默認為透明背景
+  * 顏色和顯示模式可以隨意組合
+
+【超鏈】
+  快捷鍵信息文字增加“超鏈”功能，可以跳轉到鍵盤層、打開快捷鍵編輯窗口 或 外部鏈接。
+  格式同 markdown 的超鏈：[文字](鏈 接)
+  "[]" 中是超鏈的顯示文字，可以為空，為空時，內部鏈接顯示層名+組合鍵，外部鏈接顯示鏈接地址。
+  "()" 中為鏈接地址，內部鏈接（跳轉到鍵盤層、打開快捷鍵編輯窗口）格式："(L層號, 組合鍵)"
+
+  例：（雙擊進入編輯模式查看原文）
+    [](L1)
+    [](L1, Ctrl+1)
+    [層2](L2)
+    [層2-鍵](L2, Alt+1)
+    [bing](https://bing.com/)
+`;
+const HELP3 = `
+【超鏈】
+  快捷鍵信息文字增加“超鏈”功能，可以跳轉到鍵盤層、打開快捷鍵編輯窗口 或 外部鏈接。
+  格式同 markdown 的超鏈：[文字](鏈 接)
+  "[]" 中是超鏈的顯示文字，可以為空，為空時，內部鏈接顯示層名+組合鍵，外部鏈接顯示鏈接地址。
+  "()" 中為鏈接地址，內部鏈接（跳轉到鍵盤層、打開快捷鍵編輯窗口）格式："(L層號, 組合鍵)"
+
+  例：（雙擊進入編輯模式查看原文）
+    [](L1)
+    [](L1, Ctrl+1)
+    [層2](L2)
+    [層2-鍵](L2, Alt+1)
+    [bing](https://bing.com/)
+`;
+const KeymapHelp = {
+    "#NAME": HELP_KEYMAP,
+    "#config": {
+        "layout": "pc",
+        "view": "k",
+        "kbsize": 1,
+        "kbext": false,
+        "kbhint": false,
+        "extkeys": ["#鼠標", "LB", "RB", "MB", "WhlUp", "WhlDn", "#外接小鍵盤", "XK1", "XK2", "XK3", "XK4",
+                    ],
+        "modkeys": ["Caps", "caps", "XK1"],
+        "modkey_mode": "chr",
+        "modkey_clr": true,
+        "show_comment": true,
+    },
+    "#0": {
+        "#name": "幫助",
+        "#comment": HELP
+    },
+    "#1": {
+        "#name": "鍵譜的快捷鍵",
+        "`": "鍵盤層 0",
+        "1": "鍵盤層 1",
+        "2": "鍵盤層 2",
+        "3": "鍵盤層 3",
+        "4": "鍵盤層 4",
+        "5": "鍵盤層 5",
+        "6": "鍵盤層 6",
+        "7": "鍵盤層 7",
+        "8": "鍵盤層 8",
+        "9": "鍵盤層 9",
+        "Ctrl+1": "第1個鍵譜",
+        "Ctrl+2": "第2個鍵譜",
+        "Ctrl+3": "第3個鍵譜",
+        "Ctrl+4": "第4個鍵譜",
+        "Ctrl+5": "第5個鍵譜",
+        "Ctrl+6": "第6個鍵譜",
+        "Ctrl+7": "第7個鍵譜",
+        "Ctrl+8": "第8個鍵譜",
+        "Ctrl+9": "第9個鍵譜",
+        ",": "上一個鍵譜",
+        ".": "下一個鍵譜",
+        "Q": "60% 鍵盤",
+        "W": "80% 鍵盤",
+        "E": "標準鍵盤",
+        "R": "隱藏主鍵盤",
+        "X": "顯示擴展鍵盤\n\n在主鍵盤下方顯示擴展鍵盤",
+        "Shift+X": "隱藏擴展鍵盤",
+        "shift+X": "隱藏擴展鍵盤",
+        "C": "顯示備註\n\n在頁面最下方顯示備註框",
+        "Shift+C": "隱藏備註",
+        "shift+C": "隱藏備註",
+        "G": "鍵表分組顯示",
+        "Shift+G": "關閉鍵表分組顯示",
+        "shift+G": "關閉鍵表分組顯示",
+        "Tab": "開啟鍵帽提示\n\n在鍵帽上顯示主快捷鍵，以及快捷鍵信息的第一行文字",
+        "Shift+Tab": "關閉鍵帽提示",
+        "tab": "開啟鍵帽提示\n\n在鍵帽上顯示主快捷鍵，以及快捷鍵信息的第一行文字",
+        "shift+tab": "關閉鍵帽提示",
+        "K": "“鍵圖”頁",
+        "L": "“鍵表”頁",
+        ";": "“數據”頁",
+        "P": "單頁模式\n\n將鍵圖和鍵表顯示在一個長頁面內，簡化頁面，隱藏操作檯（以便打印）",
+        "Shift+P": "分頁模式\n\n將鍵圖和鍵表顯示在不同分頁，提供完整操作界面",
+        "shift+P": "分頁模式\n\n將鍵圖和鍵表顯示在不同分頁，提供完整操作界面",
+        "M": "Mac鍵盤佈局\n\nPC 和 Mac 有些鍵是不同的，基本上除字母鍵、Fn鍵以外的都不同。",
+        "Shift+M": "PC鍵盤佈局",
+        "shift+M": "PC鍵盤佈局",
+        // "F": "* 顯示全部映射\n  顯示 包含“非本鍵盤按鍵”的映射信息\n  當組合鍵中包含有“非本鍵盤按鍵”時，受本開關控制。",
+        // "Shift+F": "關閉顯示全部映射",
+        // "shift+F": "關閉顯示全部映射",
+        "F2": "鍵盤層改名\n\n也可以雙擊上方的鍵盤層名字進行修改",
+        "LB": "錄入快捷鍵信息",
+        "RB": "篩選快捷鍵\n\n鍵圖：突出顯示快捷鍵中包含選中鍵的那些鍵帽\n鍵表：只顯示選中鍵相關的快捷鍵\n按 p 切換到單頁模式後會有更直觀的感受",
+        "Ctrl+RB": "多鍵篩選\n\n可同時選擇多個鍵進行篩選，結果為同時包含這些鍵的快捷鍵",
+        "Ctrl+O": "* 從文件載入",
+        "Ctrl+S": "* 保存至文件",
+        "Ctrl+P": "生成單頁模式圖片",
+        "#comment": HELP1
+    },
+    "#2": {
+        "#name": "進階技巧",
+        "Caps": "自定義修飾鍵\n\n可以將任意鍵設為修飾鍵",
+        "XK1": "擴展鍵做修飾鍵\n\n擴展鍵也可以做修飾鍵",
+        "Caps+A": "* 使用自定義修飾鍵的快捷鍵",
+        "XK1+Z": "* 使用擴展鍵做修飾鍵的快捷鍵",
+        "Alt+1": "未分組",
+        "Ctrl+Q": "* 未分組",
+        "Shift+A": "未分組",
+        "Win+Z": "未分組",
+        "Alt+Ctrl+3": "組1\n\n::g1",
+        "Ctrl+Shift+E": "組1\n\n::g1",
+        "Shift+Win+D": "* 組1\n\n::g1",
+        "RAlt+Win+C": "組1\n\n::g1",
+        "Alt+Ctrl+Shift+5": "組2\n\n::g2",
+        "Ctrl+Shift+Win+T": "組2\n\n::g2",
+        "RAlt+Shift+Win+G": "組2\n\n::g2",
+        "RAlt+RCtrl+Win+B": "組2\n\n::g2",
+        "Ctrl+RShift+D": "組3\n\n但不是主快捷鍵::g3",
+        "Ctrl+Shift+Q": "組1\n\n但不是主快捷鍵::g1",
+        "RCtrl+Shift+Win+T": "組4\n::g4",
+        "Ctrl+RShift+Win+T": "組5\n::g5",
+        "L": "超鏈\n\n[](L1)\n[](L1, Ctrl+1)\n[層2](L2)\n[層2-鍵](L2, Alt+1)\n[bing](https://bing.com/)",
+        "#comment": HELP2
+    },
+    "#3": {
+        "#name": "新增功能",
+        "L": "超鏈\n\n[](L1)\n[](L1, Ctrl+1)\n[層2](L2)\n[層2-鍵](L2, Alt+1)\n[bing](https://bing.com/)",
+        "#comment": HELP3
+    },
+};
+
+var Keymap = {
+    Name: "",
+    _data: null,
+    _version: "",
+    _cur_layer: 0,
+    _virtual: false,
+
+    _keytable: {},
+    _extkeys: [],
+
+    _filterkeys: [],
+
+    _default_cfg: {
+        "uimode": "tab",
+        "layout": "pc",
+        "layers": 10,
+        "view": "k",
+        "kbsize": 2,
+        "kbext": false,
+        "kbhint": true,
+        "showall": false,
+        "ks1": 0.75,
+        "kw1": 3,
+        "kh1": 3,
+        "ks2": 0.9,
+        "kw2": 5,
+        "kh2": 5,
+        "kt2": 0.75,
+        "c0": "black",
+        "c1": "lightblue",
+        "c2": "lightseagreen",
+        "c3": "black",
+        "c4": "whitesmoke",
+        "kb-bgc": "lightgray",
+        "kb-bdc": "gray",
+        "cols": 2,
+        "extkeys": [],
+        "modkeys": [],
+        "modkey_colors": MODKEY_COLORS, // {},
+        "modkey_chars": MODKEY_CHARS, // {},
+        "modkey_mode": "chr", // "raw", "chr", "dot",
+        "modkey_clr": true,
+        "modkey_clr_list": true,
+        "mod-cs2": 0.7,
+        "mod-ds2": 0.5,
+        "layer_names": {},
+        // "group": false,
+        "groups": KEY_GROUPS, // {},
+        "comment-font-size": 0.9,
+        "show_comment": false,
+        "show_cnt": true,
+        "list_by": "key", // "key", "group"
+    },
+
+    get DefaultCfg() {
+        return JSON.parse(JSON.stringify(this._default_cfg));
+    },
+
+    resetConfig() {
+        Object.assign(this.Config, this.DefaultCfg);
+    },
+
+    get _default_keymap() {
+        return JSON.parse(`{"#version": "${this._version}", "#config": ${JSON.stringify(this._default_cfg)}, "#0":{}}`);
+    },
+
+    init(name = "") {
+        this.Name = name;
+        this._data = this._default_keymap;
+        this._cur_layer = 0;
+        this._virtual = false;
+        this._filterkeys = [];
+    },
+
+    _normalizeData(src) {
+        let data = this._default_keymap;
+        // ver 1 -> 2
+        for (const k in src) {
+            if (!src[k]) continue;
+            if (k.toLowerCase() == "#config") {
+                Object.assign(data["#config"], src[k]);
+            } else if (k[0] != "#") {
+                data["#0"][k] = src[k];
+            } else {
+                data[k] = src[k];
+            }
+        }
+        // ver 2 -> 3
+        let cfg = data["#config"]
+        if ("group" in cfg) {
+            delete cfg["group"];
+        }
+        if ("group_colors" in cfg) {
+            cfg["groups"] = cfg["group_colors"];
+            delete cfg["group_colors"];
+        }
+        if ("layer_names" in cfg) {
+            for (const ln in cfg["layer_names"]) {
+                if (!(ln in data)) {
+                    data[ln] = {};
+                }
+                data[ln]["#name"] = cfg["layer_names"][ln];
+            }
+            delete cfg["layer_names"];
+        }
+        if ("groups" in cfg) {
+            for (const g in cfg["groups"]) {
+                if (typeof(cfg["groups"][g]) == "string") {
+                    cfg["groups"][g] = [cfg["groups"][g], ""];
+                }
+            }
+        }
+        // normalize combo keys
+        for (let i=0; i<cfg["layers"]; i++) {
+            let s = data["#"+i];
+            let d = {};
+            for (const n in s) {
+                if (n[0] == "#")
+                    d[n] = s[n];
+                else
+                    d[Util.normalize_combo(n)] = s[n];
+            }
+            delete data["#"+i];
+            data["#"+i] = d;
+        }
+        data["#version"] = this._version;
+        return data;
+    },
+
+    loadJSON(json_str) {
+        if (!json_str)
+            return false;
+        let temp = null;
+        try {
+            temp = JSON.parse(json_str);
+            // this.fixStruct(temp);
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+        // this._data = this._default_keymap;
+        // for (const k in temp) {
+        //     if (!temp[k]) continue;
+        //     if (k.toLowerCase() == "#config") {
+        //         Object.assign(this.Config, temp[k]);
+        //     } else if (k[0] != "#") {
+        //         this.LayerData(0)[k] = temp[k];
+        //     } else {
+        //         this._data[k] = temp[k];
+        //     }
+        // }
+        this._data = this._normalizeData(temp);
+        return true;
+    },
+
+    clear() {
+        this._data = this._default_keymap;
+        this._cur_layer = 0;
+        this._filterkeys = [];
+    },
+
+    shrink() {
+        for (const k in this._data) {
+            if (!this._data[k] || Util.is_empty_obj(this._data[k])) {
+                delete this._data[k];
+            } else {
+                for (let i=0; i<this.Config.layers; i++) {
+                    if (!(("#"+i) in this._data)) continue;
+                    for (const kk in this.LayerData(i)) {
+                        if (!this.LayerData(i)[kk]) delete this.LayerData(i)[kk];
+                    }
+                }
+            }
+        }
+    },
+
+    get JSON() {
+        return JSON.stringify(this._data, null, 2);
+    },
+
+    get Config() {
+        return this._data["#config"];
+    },
+
+    get KBSize() {
+        return Util.between(this.Config.kbsize, 0, 3);
+    },
+
+    set KBSize(v) {
+        this.Config.kbsize = Util.between(v, 0, 3);
+    },
+
+    get CurLayer() {
+        return this._cur_layer;
+    },
+
+    set CurLayer(ln) {
+        this.checkLayer(ln);
+        this._cur_layer = ln;
+    },
+
+    checkLayer(ln) {
+        if (ln < 0 || ln >= this.Config.layers) {
+            throw RangeError("Layer # error: " + ln);
+        }
+    },
+
+    LayerData(ln = null) {
+        if (ln == null)
+            ln = this.CurLayer;
+        this.checkLayer(ln);
+        if (!(("#"+ln) in this._data))
+            this._data["#"+ln] = {"#name": ""};
+        return this._data["#"+ln];
+    },
+
+    clearLayer(ln = null) {
+        if (ln == null)
+            ln = this.CurLayer;
+        this.checkLayer(ln);
+        this._data["#"+ln] = {"#name": this.getLayerName(ln)};
+    },
+
+    getLayerName(ln = null) {
+        if (ln == null)
+            ln = this.CurLayer;
+        return (this.LayerData(ln)["#name"] || "");
+    },
+
+    getLayerPrintName(ln = null) {
+        if (ln == null)
+            ln = this.CurLayer;
+        let layerName = this.getLayerName(ln);
+        return `${this.Name}_L${ln}${layerName ? "_"+layerName : ""}`;
+    },
+
+    //Rename layer
+    setLayerName(name, ln = null) {
+        if (ln == null)
+            ln = this.CurLayer;
+        this.LayerData(ln)["#name"] = name;
+    },
+
+    /**
+     * @return {{text: string, digest: string, body: string, is_main: boolean, group: string}}
+     */
+     getMapping(kn, ln = null) {
+        // return this.LayerData(ln)[Util.normalize_combo(kn)] || null;
+        return this.parseMappingInfo(this.LayerData(ln)[Util.normalize_combo(kn)] || null);
+    },
+
+    /**
+     * @return {{string: {text: string, digest: string, body: string, is_main: boolean, group: string, combo: string, mainkey: string, combokeys: [string]}}}
+     */
+     getAllMappings(mk, ln = null) {
+        let l = [];
+        for (const kn in this.LayerData(ln)) {
+            let combo = Util.split_combo(kn);
+            let mainkey = combo.pop();
+            let info = this.LayerData(ln)[kn];
+            if (mainkey == mk && info && this.isKBKeys(kn)) {
+                let i = this.parseMappingInfo(info);
+                i["combo"] = kn;
+                i["mainkey"] = mk;
+                i["combokeys"] = combo;
+                l.push(i);
+            }
+        }
+        // 按鍵數排序
+        l.sort((a, b) => (a.combokeys.length - b.combokeys.length));
+        let ret = {};
+        for (const i of l) {
+            ret[i.combo] = i;
+        }
+        return ret;
+    },
+
+    /**
+     * @return {{text: string, digest: string, body: string, is_main: boolean, group: string}}
+     */
+     parseMappingInfo(m) {
+        let ret = {text: "", digest: "", body: "", is_main: false, group: ""};
+        if (!m) return ret;
+        let s = m.trim().split("\n");
+        // for (let i=0; i<s.length; i++) {
+        //     s[i] = s[i].trim();
+        // }
+        if (s[0] && (s[0].startsWith("* ") || s[0].startsWith("~ "))) {
+            ret.is_main = true;
+            s[0] = s[0].substring(2);
+        }
+        let g = s.pop();
+        if (g && g.startsWith("::")) {
+            ret.group = g.substring(2);
+        } else {
+            s.push(g);
+        }
+        // ret.digest = s[0] || "";
+        ret.text = s.join("\n");
+        let isd = true;
+        for (const l of s) {
+            if (!l.trim()) isd = false;
+            if (isd) {
+                ret.digest += l + "\n";
+            }
+            // if (l.trim() != "--") {
+            if (!(/^\s*[\-]+\s*$/.test(l))) {
+                ret.body += l + "\n";
+            } else {
+                ret.body += "...";
+                break;
+            }
+        }
+        ret.digest = Util.formalizeText(ret.digest.trim());
+        ret.body = Util.formalizeText(ret.body);
+        return ret;
+    },
+
+    /**
+     * @param text {string}
+     * @param is_main {boolean}
+     * @param group {string}
+     * 
+     */
+    packMappingInfo(text, is_main, group) {
+        let ret = text.trim();
+        if (is_main) {
+            ret = "* " + text;
+        }
+        if (group) {
+            ret += "\n::" + group;
+        }
+        return ret;
+    },
+
+    /**
+     * @return {{combo:string, info: {text: string, digest: string, is_main: boolean, group: string}, count:int}}
+     */
+    getKeyCapMapping(mk, ln = null) {
+        let ks = this.getAllMappings(mk, ln);
+        let ret = {combo: "", info: {text: "", digest: "", is_main: false, group: ""}, count: Object.keys(ks).length};
+        if (!this.isFiltered()) {
+            for (const kn in ks) {
+                let mi = ks[kn];
+                if (mi.is_main) {
+                    ret.combo = kn;
+                    ret.info = mi;
+                    return ret;
+                }
+            }
+            if (mk in ks) {
+                ret.combo = mk;
+                ret.info = ks[ret.combo];
+                return ret;
+            } else if (ret.count == 1) {
+                ret.combo = Object.keys(ks)[0];
+                ret.info = ks[ret.combo];
+                return ret;
+            }
+        } else {
+            let combo = [...this.FilterKeys, mk].join("+");
+            if (combo in ks) {
+                ret.combo = combo;
+                ret.info = ks[ret.combo];
+                return ret;
+            }
+            for (const kn in ks) {
+                if (this.checkFilter(kn)) {
+                    ret.combo = kn;
+                    ret.info = ks[ret.combo];
+                    return ret;
+                }
+            }
+        }
+        return ret;
+    },
+
+    setMapping(kn, info, ln = null) {
+        if (info) {
+            this.LayerData(ln)[Util.normalize_combo(kn)] = info;
+        } else {
+            delete this.LayerData(ln)[Util.normalize_combo(kn)];
+        }
+    },
+
+    // Storage Methods
+    async load(name = null) {
+        this.init();
+        name = name || this.Name;
+        if (!name) {
+            return false;
+        }
+        let json_ = await _PROFILE_.read(name);
+        if (json_ && this.loadJSON(json_)) {
+            this.Name = name;
+            return true;
+        } else
+            return false;
+    },
+    async save() {
+        this.shrink();
+        if (this._virtual) return;
+        if (!this.Name) return;
+        await _PROFILE_.write(this.Name, this.JSON);
+    },
+    async del() {
+        if (this._virtual) return;
+        if (!this.Name) return;
+        await _PROFILE_.del(this.Name);
+        this.init();
+    },
+    loadHelp() {
+        this.loadJSON(JSON.stringify(KeymapHelp));
+        this.Name = KeymapHelp["#NAME"];
+        this._cur_layer = 0;
+        this._virtual = true;
+        this._filterkeys = [];
+    },
+
+    get KeyTable() {
+        if (this._extkeys != this.Config.extkeys) {
+            this._extkeys = this.Config.extkeys;
+            this._keytable = Object.assign({}, KEY_TABLE_ALL);
+            for (const k of this.Config.extkeys) {
+                this._keytable[k] = '';
+            }
+        }
+        return this._keytable;
+    },
+
+    // 自定義修飾鍵
+    get ModKeys() {
+        let mkeys = [];
+        let mkeys_na = [];
+        let ktable = this.getLayoutKeyTable();
+        for (const mk of MODKEYS_PC.concat(MODKEYS_MAC).concat( this.Config.modkeys)) {
+            if (mk in ktable) {
+                mkeys.push(mk);
+            } else {
+                mkeys_na.push(mk);
+            }
+        }
+        return this.Config.showall ? mkeys.concat(mkeys_na) : mkeys;
+    },
+    set ModKeys(v) {
+        this.Config.modkeys = [];
+        if (!v || v.length <= 0) {
+            return;
+        }
+        let def_mkeys = MODKEYS_PC.concat(MODKEYS_MAC);
+        for (const m of v) {
+            if (!def_mkeys.includes(m)) {
+                this.Config.modkeys.push(m);
+            }
+        }
+    },
+
+    isModKey(k) {
+        return this.ModKeys.includes(k);
+    },
+
+    getModColor(k) {
+        if (!this.isModKey(k)) return "";
+        // let c = Object.assign({}, MODKEY_COLORS, this.Config.modkey_colors);
+        let c = this.Config.modkey_colors;
+        if (c[k]) {
+            let cs = c[k].split("/", 2);
+            if (cs.length < 2)
+                return [cs[0], cs[0]]
+            else
+                return cs;
+        } else {
+            return "";
+        }
+    },
+
+    getModChar(k) {
+        if (!this.isModKey(k)) return "";
+        // let c = Object.assign({}, MODKEY_CHARS, this.Config.modkey_chars);
+        let c = this.Config.modkey_chars;
+        return c[k] || k[0];
+    },
+
+    get ModKeyMode() {
+        return this.Config.modkey_mode;
+    },
+    set ModKeyMode(v) {
+        this.Config.modkey_mode = v;
+    },
+
+    get ModKeyColorMode() {
+        return this.Config.modkey_clr;
+    },
+    set ModKeyColorMode(v) {
+        this.Config.modkey_clr = Boolean(v);
+    },
+
+    get ModKeyInListColorMode() {
+        return this.Config.modkey_clr_list;
+    },
+    set ModKeyInListColorMode(v) {
+        this.Config.modkey_clr_list = Boolean(v);
+    },
+
+    getLayoutKeyTable(l = null) {
+        if (l == null) l = this.Config.layout;
+        let ktable = Object.assign({}, (l == "mac" ? KEY_TABLE_MAC : KEY_TABLE_PC));
+        for (const xk of this.Config.extkeys) {
+            ktable[xk] = "";
+        }
+        return ktable;
+    },
+
+    isKBKey(k) {
+        return this.Config.showall ? true : (k in this.getLayoutKeyTable());
+    },
+
+    isKBKeys(combo_str) {
+        if (this.Config.showall) return true;
+        let ks = Util.split_combo(combo_str);
+        let ktable = this.getLayoutKeyTable();
+        for (const k of ks) {
+            if (!(k in ktable))
+                return false;
+        }
+        return true;
+    },
+
+    // 篩選
+    get FilterKeys() {
+        return this._filterkeys;
+    },
+    isFiltered() {
+        return this._filterkeys.length > 0;
+    },
+    addFilterKey(mk) {
+        if (!this._filterkeys.includes(mk)) {
+            this._filterkeys.push(mk);
+            this._filterkeys.sort();
+        }
+    },
+    delFilterKey(mk) {
+        let i = this._filterkeys.indexOf(mk);
+        if (i >= 0)
+            this._filterkeys.splice(i, 1);
+    },
+    clearFilterKeys() {
+        this._filterkeys = [];
+    },
+    isFilterKey(mk) {
+        return this._filterkeys.includes(mk);
+    },
+    checkFilter(combo_str) {
+        let rel = true;
+        let ks = Util.split_combo(combo_str);
+        for (const f of Keymap.FilterKeys) {
+            if (!ks.includes(f)) {
+                rel = false;
+                break;
+            }
+        }
+        return rel;
+    },
+
+    // 鍵帽分組
+    get Groups() {
+        return this.Config.groups;
+    },
+    getGroupColor(g) {
+        return (g in this.Groups) ? this.Groups[g][0] || "var(--c1)" : "var(--c1)"; //"transparent";
+    },
+    getGroupAlias(g) {
+        return (g in this.Groups) ? this.Groups[g][1] || g : g;
+    },
+};
+
+var Setting = {
+    _json : {
+        sidebar_enable: false,
+        sidebar_pin: true,
+        sidebar_width: 300,
+    },
+    async load() {
+        try {
+            this._json = Object.assign(this._json, JSON.parse(await _PROFILE_.readSetting()));
+        } catch (e) {
+            console.log(e);
+        }
+    },
+    async save() {
+        await _PROFILE_.writeSetting(JSON.stringify(this._json, null, 2));
+    },
+
+    get SidebarEnable() {
+        return this._json.sidebar_enable;
+    },
+    set SidebarEnable(v) {
+        this._json.sidebar_enable = Boolean(v);
+    },
+
+    get SidebarPin() {
+        return this._json.sidebar_pin;
+    },
+    set SidebarPin(v) {
+        this._json.sidebar_pin = Boolean(v);
+    },
+
+    get SidebarWidth() {
+        return this._json.sidebar_width;
+    },
+    set SidebarWidth(v) {
+        this._json.sidebar_width = Util.between(parseInt(v), 100, 800);
+    },
+};
+
+var UI = {
+    _launch_mode: "html",
+    get LaunchMode() { return this._launch_mode; },
+    set LaunchMode(v) {
+        this._launch_mode = v;
+        Util.setFlag("launch-mode", v);
+    },
+
+
+
+
+    _presenting: false,
+
+    elm(sel) {
+        return document.querySelector(sel);
+    },
+
+    elms(sel) {
+        return document.querySelectorAll(sel);
+    },
+
+    update() {
+        Util.setFlag("keymap", Keymap.Name);
+        this.elm("#prof_name").innerText = Keymap.Name;
+        this.elm("#prof_name").title = Keymap.Name;
+        this.elm("#pname_keymap").innerText = Keymap.Name;
+        this.elm("#pname_layer").innerText = Keymap.CurLayer + (Keymap.getLayerName() ? ": "+Keymap.getLayerName() : "");
+        this.Keyboard.update();
+        this.List.update();
+        this.Json.update();
+
+        let elm = this.elm("#layer_btns");
+        elm.innerHTML = "";
+        for (let n=0; n<Keymap.Config.layers; n++) {
+            let e = document.createElement("button");
+            e.id = "btn_l" + n;
+            e.classList.add("btn_l");
+            if (n == Keymap.CurLayer)
+                e.classList.add("btn_l_cur");
+            e.innerHTML = Keymap.getLayerName(n) ? (`${n}:` + Keymap.getLayerName(n)) : String(n);
+            e.onclick = (evt) => {
+                this.changeLayer(n);
+                this.update();
+            };
+            e.ondblclick = async (evt) => {
+                await this.setLayerName(n);
+                this.update();
+            };
+            // `<button id="btn_l${n}" class="btn">${n}</button>`
+            elm.appendChild(e);
+        }
+
+        Util.setFlag("sidebar-enable", Setting.SidebarEnable);
+        Util.setFlag("sidebar-pin", Setting.SidebarPin);
+        Util.setCSS("--sidebar-width", Setting.SidebarWidth + "px");
+
+        Util.setFlag('layer', Keymap.CurLayer);
+        let cfg = Keymap.Config;
+        Util.setFlag("ui", cfg.uimode);
+        Util.setFlag("view", cfg.view);
+        Util.setFlag("kbsize", Keymap.KBSize);
+        Util.setFlag("kbhint", cfg.kbhint);
+        Util.setFlag("layout", cfg.layout);
+        Util.setFlag("kbext", cfg.kbext);
+        Util.setFlag("showall", cfg.showall);
+        Util.setFlag("comment", cfg.show_comment);
+        Util.setFlag("cnt", cfg.show_cnt);
+        Util.setFlag("list-by", cfg.list_by);
+        Util.setCSS("--ks1", cfg["ks1"]);
+        Util.setCSS("--kw1", cfg["kw1"]);
+        Util.setCSS("--kh1", cfg["kh1"]);
+        Util.setCSS("--ks2", cfg["ks2"]);
+        Util.setCSS("--kw2", cfg["kw2"]);
+        Util.setCSS("--kh2", cfg["kh2"]);
+        Util.setCSS("--kt2", cfg["kt2"]);
+        Util.setCSS("--c0", cfg["c0"]);
+        Util.setCSS("--c1", cfg["c1"]);
+        Util.setCSS("--c2", cfg["c2"]);
+        Util.setCSS("--c3", cfg["c3"]);
+        Util.setCSS("--c4", cfg["c4"]);
+        Util.setCSS("--kb-bgc", cfg["kb-bgc"]);
+        Util.setCSS("--kb-bdc", cfg["kb-bdc"]);
+        Util.setCSS("--cols", cfg["cols"]);
+        Util.setCSS("--mod-cs2", cfg["mod-cs2"]);
+        Util.setCSS("--mod-ds2", cfg["mod-ds2"]);
+        Util.setCSS("--comment-font-size", cfg["comment-font-size"]);
+        this.resize();
+
+        this.loadProfListSidebar();
+    },
+
+    resize() {
+        Util.setCSS("--kbw", window.getComputedStyle(this.elm("#kb_std")).width);
+        Util.setCSS("--w", window.getComputedStyle(this.elm("#tab_kb")).width);
+    },
+
+    async onKeyDown(evt) {
+        if (evt.key == "Escape") {
+            evt.target.blur();
+            document.body.focus();
+            return;
+        }
+        if (evt.target != document.body)
+            return;
+        let handled = true;
+        let upd = true;
+        switch (evt.key.toUpperCase()) {
+            case "`":
+                this.changeLayer(0);
+                break;
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+            case "9":
+                if (evt.ctrlKey) {
+                    await this.loadNthProf(parseInt(evt.key));
+                } else {
+                    this.changeLayer(parseInt(evt.key));
+                }
+                break;
+            case ",":
+                await this.loadPrevProf();
+                break;
+            case ".":
+                await this.loadNextProf();
+                break;
+            case "Q":
+                await this.setSize(1);
+                break;
+            case "W":
+                await this.setSize(2);
+                break;
+            case "E":
+                await this.setSize(3);
+                break;
+            case "R":
+                await this.setSize(0);
+                break;
+            case "X":
+                if (evt.shiftKey) {
+                    await this.setKBExt(false);
+                } else {
+                    await this.setKBExt(true);
+                }
+                break;
+            case "K":
+                await this.changeView("k");
+                Util.setFlag("view", "k");
+                upd = false;
+                break;
+            case "S":
+                if (evt.ctrlKey) {
+                    saveKeymapFile();
+                    upd = false;
+                }
+                break;
+            case "L":
+                await this.changeView("l");
+                Util.setFlag("view", "l");
+                upd = false;
+                break;
+            case ";":
+                Util.setFlag("view", "j");
+                upd = false;
+                break;
+            case "TAB":
+                evt.stopPropagation();
+                evt.preventDefault();
+                if (evt.shiftKey) {
+                    await this.setKBHint(false);
+                } else {
+                    await this.setKBHint(true);
+                }
+                break;
+            case "P":
+                if (evt.ctrlKey) {
+                    await printAsPng(2, Keymap.getLayerPrintName());
+                    upd = false;
+                } else if (evt.shiftKey) {
+                    await this.setUIMode("tab");
+                } else {
+                    await this.setUIMode("single");
+                }
+                break;
+            case "M":
+                if (evt.shiftKey) {
+                    await this.setKBType("pc");
+                } else {
+                    await this.setKBType("mac");
+                }
+                break;
+            // case "F":
+            //     if (evt.shiftKey) {
+            //         await this.setShowAll(false);
+            //     } else {
+            //         await this.setShowAll(true);
+            //     }
+            //     break;
+            case "F2":
+                await this.setLayerName();
+                break;
+            case "O":
+                if (evt.altKey) {
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                    // let pn = prompt();
+                    let pn = await prompt_dlg();
+                    if (pn) {
+                        await this.load(pn);
+                    }
+                } else if (evt.ctrlKey) {
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                    openFile().then(async (files) => {
+                        for (const f of files)
+                            await UI.loadFile(f);
+                    });
+                    upd = false;
+                } else
+                    handled = false;
+                break;
+            case "C":
+                if (evt.ctrlKey || evt.altKey || evt.metaKey) {
+                    handled = false;
+                    break;
+                }
+                if (evt.shiftKey) {
+                    await this.setShowComment(false);
+                } else {
+                    await this.setShowComment(true);
+                }
+                break;
+            case "G":
+                if (evt.shiftKey) {
+                    await this.setListBy("key");
+                } else {
+                    await this.setListBy("group");
+                }
+                break;
+            default:
+                handled = false;
+        }
+        if (handled) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            if (upd)
+                this.update();
+        }
+    },
+
+    async onClick(evt, elm) {
+        let upd = true;
+        elm.blur();
+        switch (elm.id) {
+            case "btn_ui_tab":
+                await this.setUIMode("tab");
+                break;
+            case "btn_ui_single":
+                await this.setUIMode("single");
+                break;
+            case "tabbtn_kb":
+                await this.changeView("k");
+                break;
+            case "tabbtn_list":
+                await this.changeView("l");
+                break;
+            case "tabbtn_json":
+                Util.setFlag("view", "j");
+                upd = false;
+                break;
+            case "btn_l_clr":
+                await this.clearLayer();
+                break;
+            case "btn_hint":
+                await this.toggleKBHint();
+                break;
+            case "btn_layout":
+                await this.toggleKBType();
+                break;
+            case "btn_list_by":
+                await this.toggleListBy();
+                break;
+            case "btn_showall":
+                await this.toggleShowAll();
+                break;
+            case "btn_setting":
+                await this.setting();
+                this.Keyboard.build();
+                break;
+            case "btn_rename":
+                await this.rename();
+                break;
+            case "btn_clr":
+                await this.clear();
+                break;
+            case "btn_del":
+                await this.delete();
+                break;
+            case "btn_saveas":
+            case "btn_imp2":
+                await this.import2();
+                break;
+            case "btn_imp":
+                await this.import();
+                break;
+            case "btn_present_js":
+                await this.save_present_js();
+                break;
+            case "btn_save_as_img":
+                await printAsPng(2, Keymap.getLayerPrintName());
+                upd = false;
+                break;
+            case "btn_load_file":
+                openFile().then(async (files) => {
+                    for (const f of files)
+                        await UI.loadFile(f);
+                });
+                upd = false;
+                break;
+            case "btn_save_file":
+                saveKeymapFile();
+                upd = false;
+                break;
+            case "btn_new":
+                await this.new();
+                break;
+            case "btn_help":
+                Keymap.loadHelp();
+                this.Keyboard.build();
+                break;
+            case "btn_sidebar":
+                await this.toggleSidebarEnable();
+                Util.setFlag("sidebar-enable", Setting.SidebarEnable);
+                break;
+            case "btn_pin":
+                await this.toggleSidebarPin();
+                Util.setFlag("sidebar-pin", Setting.SidebarPin);
+                break;
+            case "btn_size_s":
+                await this.resizeSidebar(-50);
+                Util.setCSS("--sidebar-width", Setting.SidebarWidth + "px");
+                break;
+            case "btn_size_b":
+                await this.resizeSidebar(50);
+                Util.setCSS("--sidebar-width", Setting.SidebarWidth + "px");
+                break;
+            case "btn_del_shortcuts":
+                upd = await this.del_shortcuts();
+                break;
+            case "btn_set_group":
+                upd = await this.set_group();
+                break;
+            default:
+                upd = false;
+                console.log("Unhandled click-event. Elm: ", elm);
+        }
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (upd)
+            this.update();
+    },
+
+    async init() {
+        if (this._presenting) return;
+        Keymap.init();
+        window.onkeydown = async (evt) => { await this.onKeyDown(evt); };
+        window.ondragenter = (evt) => { evt.preventDefault(); };
+        window.ondragover = (evt) => { evt.preventDefault(); };
+        window.ondrop = async (evt) => {
+            evt.preventDefault();
+            // await this.loadFile(evt.dataTransfer.files[0]);
+            for (const f of evt.dataTransfer.files) {
+                await this.loadFile(f);
+            }
+        };
+        this.elm("#prof_name").onclick = async (evt) => { await this.showProfileList(); };
+        this.elm("#pcomment").ondblclick = (evt) => {
+            this.elm("#pcomment").style.display = "none";
+            let e = this.elm("#comment");
+            e.style.display = "unset";
+            e.focus();
+            e.scrollTo(0, 0);
+            e.setSelectionRange(0, 0);
+        };
+        this.elm("#comment").onchange = async (evt) => {
+            Keymap.setMapping("#comment", this.elm("#comment").value);
+            await this.save();
+            this.update();
+        };
+        this.elm("#comment").onblur = (evt) => {
+            this.elm("#comment").style.display = "none";
+            this.elm("#pcomment").style.removeProperty("display");
+        };
+        this.elm("#pname_layer").onclick = (evt) => { this.showLayerList(); };
+
+        this.Keyboard.init();
+
+        // await this.loadFirstProf();
+        await this.loadLastProf();
+        this.update();
+
+        for (const elm of this.elms(".BIND-CLICK")) {
+            elm.onclick = async (evt) => { await this.onClick(evt, elm); };
+        }
+    },
+
+    async loadFirstProf() {
+        let l = await _PROFILE_.all();
+        if (l.length > 0) {
+            if (await Keymap.load(l[0])) {
+                _PROFILE_.setLast(Keymap.Name);
+            } else {
+                Keymap.loadHelp();
+            }
+        } else {
+            // Keymap.init();
+            Keymap.loadHelp();
+        }
+        this.Keyboard.build();
+    },
+
+    async loadLastProf() {
+        let last = await _PROFILE_.getLast();
+        if (last && await Keymap.load(last)) {
+            this.Keyboard.build();
+        } else {
+            await this.loadFirstProf();
+        }
+    },
+
+    async loadProfListSidebar() {
+        function genProf(prof, add_cls, onclick, idx = "") {
+            let elm = document.createElement("DIV");
+            elm.classList.add("prof_name");
+            if (add_cls) elm.classList.add(...add_cls);
+            if (onclick) elm.onclick = onclick;
+            elm.innerHTML = prof;
+            elm.title = prof;
+            if (idx) elm.dataset.index = idx;
+            return elm;
+        }
+
+        let s = [];
+        let l = await _PROFILE_.all();
+        if (l.length > 0) {
+            for (const [i, p] of l.entries()) {
+                let c = null;
+                if (p == Keymap.Name)
+                    c = ["prof_cur"];
+                s.push(genProf(p, c, async () => {await this.load(p); this.update();}, i < 9 ? i + 1 : ""));
+            }
+        }
+        let cntnr = this.elm("#sidebar .prof_list");
+        cntnr.innerHTML = "";
+        cntnr.append(...s);
+    },
+
+    async showProfileList() {
+        function hideList() {
+            for (const e of document.querySelectorAll(".prof_list.popup")) {
+                e.remove();
+            }
+        }
+        function genProf(prof, add_cls, onclick, idx = "") {
+            let elm = document.createElement("DIV");
+            elm.classList.add("prof_name");
+            if (add_cls) elm.classList.add(...add_cls);
+            if (onclick) elm.onclick = onclick;
+            elm.innerHTML = prof;
+            elm.title = prof;
+            if (idx) elm.dataset.index = idx;
+            return elm;
+        }
+
+        hideList();
+
+        let s = [];
+        let l = await _PROFILE_.all();
+        if (l.length > 0) {
+            for (const [i, p] of l.entries()) {
+                let c = null;
+                if (p == Keymap.Name)
+                    c = ["prof_cur"];
+                s.push(genProf(p, c, async () => {hideList(); await this.load(p); this.update();}, i < 9 ? i + 1 : ""));
+            }
+        }
+        // let elm_new = genProf(NEW_KEYMAP, ["prof_cmd"], async () => {hideList(); await this.new(); this.update();});
+        // s.push(elm_new);
+        // s.push(genProf(KeymapHelp["#NAME"], ["prof_cmd"], async () => {hideList(); Keymap.loadHelp(); this.Keyboard.build(); this.update();}));
+        let temp = document.createElement("span");
+        temp.innerHTML = `<div class="prof_list popup" style="position:absolute;opacity: 0;"></div>`;
+        let elm_list = temp.children[0];
+        elm_list.append(...s);
+        elm_list.onmouseleave = hideList;
+        let elm_prof = this.elm("#prof_name");
+        document.body.appendChild(elm_list);
+        elm_list.style.left = elm_prof.offsetLeft - 5;
+        elm_list.style.top = elm_prof.offsetTop - 5; // - elm_new.offsetHeight - 5;
+        elm_list.style.opacity = 1;
+    },
+
+    showLayerList() {
+        let elm = document.createElement("div");
+        for (let n=0; n<Keymap.Config.layers; n++) {
+            let e = document.createElement("div");
+            e.innerHTML = Keymap.getLayerName(n) ? (`${n}:` + Keymap.getLayerName(n)) : String(n);
+            e.classList.add("opt_l");
+            if (n == Keymap.CurLayer)
+                e.classList.add("opt_l_cur");
+            e.onclick = (evt) => {
+                this.changeLayer(n);
+                this.update();
+                elm.remove();
+            };
+            elm.appendChild(e);
+        }
+        elm.style.position = "absolute";
+        elm.classList.add("layer_list");
+        elm.onmouseleave = (evt) => { elm.remove(); };
+        let a = UI.elm("#pname_layer");
+        elm.style.left = a.offsetLeft;
+        elm.style.top = a.offsetTop; // + a.offsetHeight;
+        this.elm("#row_cap").appendChild(elm);
+    },
+
+    present(__name, __keymap) {
+        this._presenting = true;
+        Keymap.loadJSON(JSON.stringify(__keymap));
+        Keymap.Name = __name || " ";
+        Keymap._virtual = true;
+        let cmt = Keymap.getMapping("#comment");
+        if (cmt.text) {
+            this.elm("#pcomment").style.display = "unset";
+        } else {
+            this.elm("#pcomment").style.display = "none";
+        }
+        for (const e of this.Keyboard.Ks) {
+            e.style.setProperty("cursor", "unset");
+            // e.onclick = null; // e.oncontextmenu;
+        }
+        this.setMapping = () => {};
+        this.setUIMode("single");
+        this.update();
+        window.onkeydown = null;
+        window.ondragenter = null;
+        window.ondragover = null;
+        window.ondrop = null;
+        this.elm("#ui_switch").style.display = "none";
+        this.elm("#btn_ui_tab").onclick = null;
+        this.elm("#btn_ui_single").onclick = null;
+        this.elm("#mods").style.display = "unset";
+        let help = this.elm("#btn_save_as_img");
+        help.innerHTML = `?`;
+        help.style.setProperty("display", "unset");
+        help.dataset.help = "簡易操作指南";
+        help.style.setProperty("height", "22px");
+        help.style.setProperty("width", "22px");
+        help.style.setProperty("line-height", "22px");
+        help.onclick = () => {
+            let dlg = document.createElement("dialog");
+            dlg.innerHTML = `<div style="margin:10px;padding:10px;display:flex;flex-flow:column;gap:5px;">
+                <h3>簡易操作指南</h3>
+                <li>鼠標指向按鍵會顯示該鍵上的快捷鍵</li>
+                <li>右鍵點擊按鍵可以篩選包含該鍵的快捷鍵</li>
+                <li>按住 Ctrl 再點擊右鍵可以篩選多個按鍵</li>
+                <li>點擊頂部的層名可以切換不同的鍵盤層</li>
+                </div>
+                <div class="f-end"><button class="btn rnd">關閉</button></div>`;
+            dlg.querySelector("button").onclick = () => { dlg.remove(); };
+            dlg.onclose = () => { dlg.remove(); };
+            document.body.append(dlg);
+            dlg.showModal();
+        };
+    },
+
+    // Data Operation Methods
+    async new() {
+        let name = await get_name_dlg("請輸入新鍵譜名：");
+        if (name) {
+            if (await _PROFILE_.isExist(name)) {
+                // if (!confirm(`已存在鍵譜《${name}》！\n\n如果繼續，該鍵譜的原有數據將被清空。\n\n是否繼續？`)) return;
+                if (!(await confirm_dlg(`已存在鍵譜《${name}》！\n\n如果繼續，該鍵譜的原有數據將被清空。\n\n是否繼續？`))) return;
+            }
+            Keymap.init(name);
+            await Keymap.save();
+            await _PROFILE_.setLast(Keymap.Name);
+        }
+    },
+
+    async save(force = true) {
+        if (!Keymap.Name) {
+            // if (!force) return;
+            Keymap.Name = await get_name_dlg("請輸入鍵譜名：");
+        }
+        if (!Keymap.Name) return;
+        await Keymap.save();
+    },
+
+    async load(name) {
+        if (!await Keymap.load(name)) {
+            // alert(`無法載入鍵譜《${name}》`);
+            await alert_dlg(`無法載入鍵譜《${name}》`);
+            // await this.loadFirstProf();
+            await this.loadLastProf();
+            return;
+        }
+        await _PROFILE_.setLast(Keymap.Name);
+        this.Keyboard.build();
+    },
+
+    async delete() {
+        // if (!confirm(`確認要刪除鍵譜《${Keymap.Name}》？`)) return;
+        if (!(await confirm_dlg(`確認要刪除鍵譜《${Keymap.Name}》？`))) return;
+        await Keymap.del();
+        await this.loadFirstProf();
+    },
+
+    async import() {
+        let json_ = this.Json.Value;
+        if (!json_)
+            return false;
+        if (Keymap.loadJSON(json_)) {
+            await this.save();
+            return true;
+        }
+        return false;
+    },
+
+    async import2(def_name = "") {
+        let json_ = this.Json.Value;
+        if (!json_)
+            return false;
+        let name = await get_name_dlg("請輸入新鍵譜名：", def_name || Keymap.Name);
+        if (name) {
+            // if ((await _PROFILE_.isExist(name)) && !confirm(`已存在鍵譜《${name}》！\n\n如果繼續，該鍵譜的原有數據將被清空。\n\n是否繼續？`))
+            if ((await _PROFILE_.isExist(name)) && !(await confirm_dlg(`已存在鍵譜《${name}》！\n\n如果繼續，該鍵譜的原有數據將被清空。\n\n是否繼續？`)))
+                return false;
+            Keymap.init();
+            if (!Keymap.loadJSON(json_))
+                return false;
+            Keymap.Name = name;
+            await this.save();
+            await _PROFILE_.setLast(Keymap.Name);
+            return true;
+        }
+        return false;
+    },
+
+    async save_present_js() {
+        let js = `let __name="${Keymap.Name}";\nlet __keymap=${Keymap.JSON};\nUI.present(__name, __keymap);`;
+        let blob = new Blob([js], { type: "text/javascript;charset=utf-8" });
+        saveFile(blob, "present.js");
+    },
+
+    async clear() {
+        // if (!confirm(`確認要清空整個鍵譜《${Keymap.Name}》？`)) return;
+        if (!(await confirm_dlg(`確認要清空整個鍵譜《${Keymap.Name}》？`))) return;
+        Keymap.clear();
+        await this.save(false);
+    },
+
+    async rename() {
+        let old_name = Keymap.Name;
+        if (await this.import2()) {
+            await _PROFILE_.del(old_name);
+        }
+    },
+
+    /**
+     * @param {int} n - 從 1 開始
+     */
+    async loadNthProf(n) {
+        let l = await _PROFILE_.all();
+        if (n >= 1 && n <= l.length) {
+            if (await Keymap.load(l[n-1])) {
+                await _PROFILE_.setLast(Keymap.Name);
+                this.Keyboard.build();
+            }
+        }
+    },
+
+    async loadPrevProf() {
+        let l = await _PROFILE_.all();
+        if (l.length > 0) {
+            let n = -1;
+            if (Keymap.Name == HELP_KEYMAP) {
+                n = 0;
+            } else {
+                n = l.indexOf(Keymap.Name) - 1;
+            }
+            if (n >= 0) {
+                if (await Keymap.load(l[n])) {
+                    await _PROFILE_.setLast(Keymap.Name);
+                    this.Keyboard.build();
+                }
+            }
+        }
+    },
+
+    async loadNextProf() {
+        let l = await _PROFILE_.all();
+        if (l.length > 0) {
+            let n = -1;
+            if (Keymap.Name == HELP_KEYMAP) {
+                n = 0;
+            } else {
+                n = l.indexOf(Keymap.Name) + 1;
+            }
+            if (n < l.length) {
+                if (await Keymap.load(l[n])) {
+                    await _PROFILE_.setLast(Keymap.Name);
+                    this.Keyboard.build();
+                }
+            }
+        }
+    },
+
+    //Rename layer
+    async setLayerName(ln = null) {
+        ln = ln || Keymap.CurLayer;
+        let name = await get_name_dlg(`請輸入鍵盤層【 ${ln} 】名字：`, Keymap.getLayerName(ln), false, true);
+        if (name != null) {
+            Keymap.setLayerName(name, ln);
+            await this.save(false);
+        }
+    },
+
+    async clearLayer() {
+        // if (!confirm(`確認要清空鍵盤層【 ${Keymap.CurLayer} 】？`)) return;
+        if (!(await confirm_dlg(`確認要清空鍵盤層【 ${Keymap.CurLayer} 】？`))) return;
+        Keymap.clearLayer();
+        await this.save(false);
+    },
+
+    // UI Operation Methods
+
+    async setUIMode(v) {
+        Keymap.Config.uimode = v;
+        await this.save(false);
+    },
+
+    async changeView(view) {
+        if (view == "k" || view == "l") {
+            Keymap.Config.view = view;
+            await this.save(false);
+        }
+    },
+
+    changeLayer(ln) {
+        if (ln < 0 || ln > Keymap.Config.layers) return;
+        Keymap.CurLayer = ln;
+    },
+
+    async changeSize(delta) {
+        Keymap.KBSize += delta;
+        await this.save(false);
+    },
+
+    async setSize(s) {
+        Keymap.KBSize = s;
+        await this.save(false);
+    },
+
+    async setKBExt(v) {
+        Keymap.Config.kbext = Boolean(v);
+        await this.save(false);
+    },
+    async toggleKBExt() {
+        await this.setKBExt(!Keymap.Config.kbext);
+    },
+
+    async setKBHint(v) {
+        Keymap.Config.kbhint = Boolean(v);
+        await this.save(false);
+    },
+    async toggleKBHint() {
+        await this.setKBHint(!Keymap.Config.kbhint);
+    },
+
+    async setListBy(v) {
+        Keymap.Config.list_by = v;
+        await this.save(false);
+    },
+    async toggleListBy() {
+        await this.setListBy(Keymap.Config.list_by == "group" ? "key" : "group");
+    },
+
+    async setKBType(v) {
+        Keymap.Config.layout = v;
+        await this.save(false);
+    },
+    async toggleKBType() {
+        await this.setKBType((Keymap.Config.layout == "mac") ? "pc" : "mac");
+    },
+
+    async setShowAll(v) {
+        Keymap.Config.showall = Boolean(v);
+        await this.save(false);
+    },
+    async toggleShowAll() {
+        await this.setShowAll(!Keymap.Config.showall);
+    },
+
+    async setShowComment(v) {
+        Keymap.Config.show_comment = Boolean(v);
+        await this.save(false);
+    },
+    async toggleShowComment() {
+        await this.setShowComment(!Keymap.Config.show_comment);
+    },
+
+    async setSidebarEnable(v) {
+        Setting.SidebarEnable = Boolean(v);
+        await Setting.save();
+    },
+    async toggleSidebarEnable() {
+        await this.setSidebarEnable(!Setting.SidebarEnable);
+    },
+
+    async setSidebarPin(v) {
+        Setting.SidebarPin = Boolean(v);
+        await Setting.save();
+    },
+    async toggleSidebarPin() {
+        await this.setSidebarPin(!Setting.SidebarPin);
+    },
+
+    async resizeSidebar(delta) {
+        Setting.SidebarWidth += delta;
+        await Setting.save();
+    },
+
+    async setting() {
+        await setting_dlg();
+        await this.save();
+    },
+
+    toggleFilter(mk, multi) {
+        if (Keymap.isFilterKey(mk)) {
+            if (multi)
+                Keymap.delFilterKey(mk);
+            else
+                Keymap.clearFilterKeys();
+        } else {
+            if (!multi)
+                Keymap.clearFilterKeys();
+            Keymap.addFilterKey(mk);
+        }
+        this.Keyboard.update();
+        this.List.update();
+    },
+
+    // Keymapping Methods
+    async setMapping(kn) {
+        await setmapping_dlg(kn);
+        await this.save();
+        this.update();
+    },
+
+    async del_shortcuts() {
+        let elms = this.elms(`#list .shortcut input[type="checkbox"]:checked`);
+        if (!elms.length) {
+            // alert("請先選中要操作的快捷鍵");
+            await alert_dlg("請先選中要操作的快捷鍵");
+            return false;
+        }
+        // if (!confirm("確實要刪除選中的快捷鍵嗎？")) return false;
+        if (!(await confirm_dlg("確實要刪除選中的快捷鍵嗎？"))) return false;
+        for (const e of elms) {
+            Keymap.setMapping(e.dataset.combo, "");
+        }
+        await this.save();
+        return true;
+    },
+
+    async set_group() {
+        let elms = this.elms(`#list .shortcut input[type="checkbox"]:checked`);
+        if (!elms.length) {
+            // alert("請先選中要操作的快捷鍵");
+            await alert_dlg("請先選中要操作的快捷鍵");
+            return false;
+        }
+        let grp = await select_group_dlg();
+        if (grp == null) return false;
+        for (const e of elms) {
+            let mi = Keymap.getMapping(e.dataset.combo);
+            Keymap.setMapping(e.dataset.combo, Keymap.packMappingInfo(mi.text, mi.is_main, grp));
+        }
+        await this.save();
+        return true;
+    },
+
+    // File operation
+    async loadFile(file) {
+        if (file.name.toLowerCase().endsWith(".keymap")) {
+            let name = file.name.slice(0, -7); //
+            if (await _PROFILE_.isExist(name)) {
+                // if (!confirm(`已存在鍵譜《${name}》！\n\n如果繼續，該鍵譜的原有數據將被清空。\n\n是否繼續？`)) return;
+                if (!(await confirm_dlg(`已存在鍵譜《${name}》！\n\n如果繼續，該鍵譜的原有數據將被清空。\n\n是否繼續？`))) return;
+            }
+            let json_ = await file.text();
+            Keymap.init();
+            if (!Keymap.loadJSON(json_))
+                return;
+            Keymap.Name = name;
+            await this.save();
+            await _PROFILE_.setLast(Keymap.Name);
+            this.update();
+        } else {
+            // alert("僅支持 '.keymap' 文件");
+            await alert_dlg("僅支持 '.keymap' 文件");
+        }
+    },
+}
+
+function loadKeymapFromHost(jsonString) {
+    // 這個函式需要能夠存取 Keymap 和 UI 物件，所以放在它們定義之後
+    if (Keymap.loadJSON(jsonString)) {
+        // 從載入的資料中提取鍵譜名稱並更新
+        Keymap.Name = Keymap._data["#NAME"] || "Loaded From Host";
+        
+        // 重新建構鍵盤佈局，以防擴充鍵或設定有變
+        UI.Keyboard.build();
+        
+        // 更新整個 UI
+        UI.update();
+        console.log("成功從 Host 應用程式載入鍵譜。");
+    } else {
+        console.error("從 Host 載入鍵譜資料失敗。");
+    }
+}
+
+
+
+
+
+UI.Keyboard = {
+    _inited: false,
+    Elm: UI.elm("#kb_std"),
+    ElmExt: UI.elm("#kb_ext"),
+    _tipTimer: null,
+
+    get Ks() {
+        return UI.elms("k");
+    },
+
+    K(mk) {
+        return UI.elm(`k[data-k="${mk}"]`);
+    },
+
+    showTip(elm_k) {
+        this.clearTips();
+        if (!elm_k.classList.contains("set")) return;
+        let s = [];
+        let l = Keymap.getAllMappings(elm_k.dataset.k);
+        for (const kn in l) {
+            if (!Keymap.checkFilter(kn)) continue;
+            s.push(`${Util.gen_combo_kn_elm(kn, true, Keymap.ModKeyColorMode)}`);
+        }
+        if (s.length <= 0) return;
+        let temp = document.createElement("span");
+        temp.innerHTML = `<div class="kms_info">${s.join("")}</div>`;
+        let elm_tip = temp.children[0];
+        elm_tip.onmouseenter = (evt) => { clearTimeout(this._tipTimer); this._tipTimer = null; }
+        elm_tip.onmouseleave = (evt) => { this.clearTips() };
+        for (const i of elm_tip.querySelectorAll("kcombo")) {
+            i.onclick = async (evt) => { await UI.setMapping(i.dataset.combo); };
+        }
+        let ktable = Keymap.getLayoutKeyTable();
+        for (const kn of elm_tip.querySelectorAll("kn")) {
+            if (!(kn.dataset.k in ktable)) {
+                kn.classList.add("na");
+            }
+            // check filter keys
+            if (Keymap.isFilterKey(kn.dataset.k)) {
+                kn.classList.add("sel");
+            }
+        }
+        elm_tip.style.minWidth = "var(--kw)";
+        elm_tip.style.minHeight = "var(--kh)";
+        let elm_parent = (this.Elm.contains(elm_k)) ? this.Elm : this.ElmExt;
+        elm_parent.appendChild(elm_tip);
+        let left = elm_k.offsetLeft;
+        let maxWidth = elm_parent.offsetWidth - elm_k.offsetLeft;
+        if (elm_k.offsetLeft > elm_parent.offsetWidth - elm_tip.offsetWidth) {
+            left = elm_k.offsetLeft + elm_k.offsetWidth - elm_tip.offsetWidth;
+            maxWidth = elm_k.offsetLeft + elm_k.offsetWidth;
+        }
+        elm_tip.style.left = Math.max(left, 0);
+        elm_tip.style.width = Math.min(elm_tip.offsetWidth, maxWidth);
+        
+        elm_tip.style.top = elm_k.offsetTop + elm_k.offsetHeight;
+        elm_tip.style.opacity = 1;
+    },
+
+    clearTips() {
+        clearTimeout(this._tipTimer);
+        this._tipTimer = null;
+        for (const e of document.querySelectorAll(".kms_info")) {
+            e.remove();
+        }
+    },
+
+    _genElmK(kn) {
+        return `<div class="ktn">${kn}</div><div class="ktr"><div class="modkeys"></div><div class="mk">${kn}</div><div class="cnt"></div></div><div class="ktm"></div>`;
+    },
+
+    init() {
+        if (this._inited) return;
+        this._inited = true;
+        for (const elm of this.Ks) {
+            elm.dataset.k = elm.innerHTML;
+        }
+        this.build();
+    },
+
+    build() {
+        // add extkeys
+        let s = [];
+        for (const k of Keymap.Config.extkeys) {
+            if (k == "__CR/LF__") {
+                // s.push(`<span style="width:100%;margin:-10px;"></span>`);
+                s.push("</krx><krx>")
+            } else {
+                let e = null;
+                if (k[0] == "#") {
+                    e = document.createElement("d");
+                    e.classList.add("f-end");
+                    e.innerHTML = k.substring(1);
+                    // s.push(`<d class="f-end">${k.substring(1)}</d>`);
+                } else {
+                    e = document.createElement("k");
+                    e.dataset.k = k;
+                    e.innerHTML = this._genElmK(k);
+                    // s.push(`<k data-k="${k}">${this._genElmK(k)}</k>`);
+                }
+                s.push(e.outerHTML);
+        }
+        }
+        if (s.length > 0)
+            this.ElmExt.innerHTML = "<krx>" + s.join("") + "</krx>";
+        else
+            this.ElmExt.innerHTML = "";
+        for (const elm of this.Ks) {
+            if (elm.dataset.k in Keymap.KeyTable) {
+                elm.classList.remove("dis");
+                elm.innerHTML = this._genElmK(Keymap.KeyTable[elm.dataset.k] || elm.dataset.k);
+                elm.onmouseenter = (evt) => { this.showTip(elm); };
+                elm.onmouseleave = (evt) => { this._tipTimer = setTimeout(() => { this.clearTips(); }, 100); };
+                // elm.onmouseleave = (evt) => { this.clearTips() };
+                elm.onclick = (evt) => { UI.setMapping(elm.querySelector(".ktr").dataset.k || elm.dataset.k); };
+                elm.oncontextmenu = (evt) => {
+                    evt.preventDefault();
+                    if (Keymap.isModKey(elm.dataset.k)) {
+                        UI.toggleFilter(elm.dataset.k, evt.ctrlKey);
+                    }
+                }
+            } else {
+                elm.classList.add("dis");
+            }
+        }
+    },
+
+    updateK(elm_k) {
+        let mk = elm_k.dataset.k;
+        if (!mk || !(mk in Keymap.KeyTable)) {
+            console.log(mk);
+            return;
+        }
+        // 清理 css class
+        elm_k.classList.remove("mod", "set", "sel", "rel", "no-rel", "group");
+        let elm_ktr = elm_k.querySelector(".ktr");
+        elm_ktr.dataset.k = "";
+        let elm_mk = elm_ktr.querySelector(".mk");
+        elm_mk.innerHTML = Keymap.KeyTable[mk] || mk;
+        let elm_modkeys = elm_ktr.querySelector(".modkeys");
+        elm_modkeys.innerHTML = "";
+        let elm_cnt = elm_ktr.querySelector(".cnt");
+        elm_cnt.innerHTML = "";
+        let elm_ktm = elm_k.querySelector(".ktm");
+        elm_ktm.innerHTML = "";
+        elm_ktm.classList.remove("na");
+        let fm = Keymap.getKeyCapMapping(mk);
+        let ktable = Keymap.getLayoutKeyTable();
+        if (fm.count) {
+            elm_k.classList.add("set");
+            elm_ktm.classList.remove("na");
+            let na = false;
+            if (fm.combo) {
+                fm.count --;
+                elm_ktr.dataset.k = fm.combo;
+                let l = Util.split_combo(fm.combo);
+                l.pop();
+                let s = "";
+                for (const m of l) {
+                    let txt = "";
+                    if (Keymap.ModKeyMode == "raw")
+                        txt = m;
+                    else if (Keymap.ModKeyMode == "chr")
+                        txt = Keymap.getModChar(m) || m[0];
+                    let clr = Keymap.getModColor(m) || ["transparent", "transparent"];
+                    s += `<div class="mod ${Keymap.ModKeyColorMode?'mod_color':''} mod_${Keymap.ModKeyMode} ${m in ktable?'':'na'}" data-k="${m}" style="${clr[0]?'--mod-c1:'+clr[0]+';':''}${clr[1]?'--mod-c2:'+clr[1]+';':''}">${txt}</div>`;
+                    if (!(m in ktable)) {
+                        elm_ktm.classList.add("na");
+                        na = true;
+                    }
+                }
+                elm_modkeys.innerHTML = s;
+                // let mps = fm.info.trim().split('\n');
+                // elm_ktm.innerHTML = (mps[0].startsWith("* ") || mps[0].startsWith("~ ")) ? mps[0].substr(2) : mps[0];
+                elm_ktm.innerHTML = fm.info.digest;
+                // keycap group color
+                if (!na) {
+                    elm_k.classList.add("group");
+                    // let g = mps.pop();
+                    // if (g.startsWith("::")) {
+                    //     elm_k.style.setProperty("--gc", Keymap.getGroupColor(g.substr(2)));
+                    if (fm.info.group) {
+                        elm_k.style.setProperty("--gc", Keymap.getGroupColor(fm.info.group));
+                    } else {
+                        elm_k.style.removeProperty("--gc");
+                    }
+                }
+            }
+            elm_cnt.innerText = fm.count ? "+"+fm.count : "";
+        }
+        // set modkey style
+        if (Keymap.isModKey(mk)) {
+            elm_k.classList.add("mod");
+            if (Keymap.ModKeyColorMode) {
+                let clr = Keymap.getModColor(mk);
+                if (clr) {
+                    elm_mk.classList.add("mod_color")
+                    elm_mk.style.setProperty("--mod-c1", clr[0]);
+                    elm_mk.style.setProperty("--mod-c2", clr[1]);
+                }
+            }
+        }
+        // check filter keys
+        if (Keymap.isFiltered()) {
+            if (Keymap.isFilterKey(mk)) {
+                elm_k.classList.add("sel");
+            } else if (fm.combo) {
+                elm_k.classList.add("rel");
+            } else {
+                elm_k.classList.add("no-rel");
+            }
+        }
+    },
+
+    update() {
+        for (const elm_k of this.Ks) {
+            this.updateK(elm_k);
+        }
+        let cmt = Keymap.getMapping("#comment")
+        UI.elm("#comment").value = cmt.text;
+        UI.elm("#pcomment").innerHTML = Util.formalizeText(cmt.text) || UI.elm("#comment").getAttribute("placeholder");
+    },
+};
+
+UI.List = {
+    Elm: UI.elm("#list"),
+    ElmMods: UI.elm("#mods"),
+
+    get Kinfos() {
+        return this.Elm.querySelectorAll("kinfo");
+    },
+    get Kcombos() {
+        return this.Elm.querySelectorAll("kcombo");
+    },
+
+    update() {
+        // 篩選框
+        let mods = [];
+        for (const k of Keymap.ModKeys) {
+            if (Keymap.isKBKeys(k)) {
+                if (Keymap.ModKeyInListColorMode) {
+                    let clr = Keymap.getModColor(k) || ["transparent", "transparent"];
+                    mods.push(`<label style="white-space: nowrap;cursor: pointer;"><input type="checkbox" value="${k}" /><kn data-k="${k}" class="ck mod_color" style="${clr[0]?'--mod-c1:'+clr[0]+';':''}${clr[1]?'--mod-c2:'+clr[1]+';':''}">${k}</kn></label>`)
+                } else {
+                    mods.push(`<label style="white-space: nowrap;cursor: pointer;"><input type="checkbox" value="${k}" /><kn data-k="${k}" class="ck">${k}</kn></label>`)
+                }
+            }
+        }
+        mods.push(`<span style="flex: 1;text-align:end;"><input class="search" style="width: 6rem;border: 1px solid gray;border-radius: 3px;" placeholder="按文字篩選" /></span>`);
+        this.ElmMods.innerHTML = mods.join("");
+        for (const e of this.ElmMods.querySelectorAll('input[type="checkbox"]')) {
+            e.checked = Keymap.isFilterKey(e.value);
+            // this.ElmMods.querySelector(`kn[data-k="${e.value}"]`).classList.add(e.checked ? "sel" : "no-sel");
+            e.onchange = (evt) => {
+                if (e.checked) {
+                    Keymap.addFilterKey(e.value);
+                } else {
+                    Keymap.delFilterKey(e.value);
+                }
+                UI.update();
+            }
+        }
+        this.ElmMods.querySelector(".search").onkeyup = (evt) => {
+            if (evt.key == "Enter") evt.target.blur();
+            let srch = evt.target.value.toLowerCase();
+            for (const i of this.Kinfos) {
+                if (!i.innerText.toLowerCase().includes(srch)) {
+                    for (const e of this.Elm.querySelectorAll(`[data-combo="${i.dataset.combo}"]`)) {
+                        e.classList.add("hidden");
+                    }
+                } else {
+                    for (const e of this.Elm.querySelectorAll(`[data-combo="${i.dataset.combo}"]`)) {
+                        e.classList.remove("hidden");
+                    }
+                }
+            }
+        }
+        // 篩選+分組
+        let ks = {};
+        for (const mk in Keymap.KeyTable) {
+            let l = Keymap.getAllMappings(mk);
+            for (const kn in l) {
+                if (!Keymap.checkFilter(kn)) continue;
+                let by = "";
+                if (Keymap.Config.list_by == "group") {
+                    by = (l[kn].group && l[kn].group in Keymap.Groups) ? l[kn].group : "未分組";
+                } else { //if (Keymap.Config.list_by == "key") {
+                    // by = mk;
+                    // by = "KEY";
+                    let MK = mk[0].toUpperCase();
+                    if (MK >= "0" && MK <= "9")
+                        by = "0-9";
+                    else if (MK >= "A" && MK <= "G")
+                        by = "A-G";
+                    else if (MK >= "H" && MK <= "N")
+                        by = "H-N";
+                    else if (MK >= "O" && MK <= "T")
+                        by = "O-T";
+                    else if (MK >= "U" && MK <= "Z")
+                        by = "U-Z";
+                    else
+                        by = "其他";
+                }
+                if (!(by in ks))
+                    ks[by] = [];
+                ks[by].push(l[kn]);
+            }
+        }
+        // 排序
+        for (const by in ks) {
+            ks[by].sort((a, b) => {
+                let la = Util.split_combo(a.combo);
+                let lb = Util.split_combo(b.combo);
+                if (Keymap.isFiltered()) { // 有篩選，先按鍵數（匹配度）再按字母序
+                    if (la.length - lb.length) {
+                        return la.length - lb.length;
+                    }
+                    if (a.mainkey > b.mainkey) return 1;
+                    if (a.mainkey < b.mainkey) return -1;
+                    if (a.mainkey === b.mainkey) return 0;
+                } else { // 無篩選，先按字母序再按鍵數
+                    if (a.mainkey > b.mainkey) return 1;
+                    if (a.mainkey < b.mainkey) return -1;
+                    if (a.mainkey === b.mainkey) return la.length - lb.length;
+                }
+            });
+        }
+        let lst = [];
+        let group_color = true;
+         if (Keymap.Config.list_by == "group") {
+            lst = Object.keys(Keymap.Groups);
+            lst.push("未分組");
+            group_color = false;
+        } else { // if (Keymap.Config.list_by == "key") {
+            lst = ["A-G", "H-N", "O-T", "U-Z", "0-9", "其他"];
+            // lst = {"KEY": ""};
+        }
+        let s = [];
+        for (const by of lst) {
+            if (!ks[by]) continue;
+            if (Keymap.Config.list_by == "group") {
+                s.push(`<div class="group" style="--gc: ${Keymap.getGroupColor(by)||"var(--c1)"};">`);
+                s.push(`<div class="group_label" style="--gc: ${Keymap.getGroupColor(by)||"var(--c1)"};">${Keymap.getGroupAlias(by)}</div>`);
+            } else {
+                s.push(`<div class="group" style="--gc: var(--c1);">`);
+                s.push(`<div class="group_label" style="--gc: var(--c1);">${by}</div>`);
+            }
+            let p_label = s.length - 1;
+            for (const mi of ks[by]) {
+                s.push(`<span class="shortcut" data-combo="${mi.combo}">${Util.gen_combo_kn_elm(mi.combo, group_color, Keymap.ModKeyInListColorMode, true)}</span>`);
+            }
+            s[p_label] = s[p_label].replace(`</div>`, `<span class="num">(${s.length - p_label - 1})</span></div>`);
+            s.push(`</div>`);
+        }
+        // 顯示
+        this.Elm.innerHTML = s.join('\n');
+        // 為非本鍵盤佈局按鍵著色
+        let ktable = Keymap.getLayoutKeyTable();
+        for (const kn of this.ElmMods.querySelectorAll("kn")) {
+            if (!(kn.dataset.k in ktable)) {
+                kn.classList.add("na");
+            }
+        }
+        for (const kn of this.Elm.querySelectorAll("kn")) {
+            if (!(kn.dataset.k in ktable)) {
+                kn.classList.add("na");
+            }
+        }
+        // 綁定修飾鍵篩選事件
+        for (const i of this.Kcombos) {
+            i.onclick = async (evt) => { await UI.setMapping(i.dataset.combo); };
+        }
+        // 為修飾鍵著色
+        if (Keymap.isFiltered()) { // 所有修飾鍵均未選時，都顯示為選中狀態
+            for (const i of this.Kcombos) {
+                for (const ck of i.querySelectorAll("kn")) {
+                    if (Keymap.isFilterKey(ck.dataset.k)) {
+                        ck.classList.add("sel");
+                    } else {
+                        ck.classList.add("no-sel");
+                    }
+                }
+            }
+        }
+    },
+};
+
+UI.Json = {
+    Elm: UI.elm("#json"),
+
+    get Value() {
+        return this.Elm.value;
+    },
+
+    update() {
+        this.Elm.value = Keymap.JSON;
+    },
+};
+
+async function alert_dlg(info) {
+    return new Promise((resolver) => {
+        let html = `<dialog class="alert_dlg">
+            <div style="font-weight: bold;white-space:pre-wrap;"">${info}</div>
+            <div class="btn_box">
+                <button class="btn btnok">確定</button>
+            </div>
+            </dialog>`;
+        let tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        let dlg = tmp.children[0];
+        function _close() {
+            dlg.remove();
+            resolver();
+        }
+        dlg.querySelector(".btnok").onclick = _close;
+        dlg.onclose = _close;
+        document.body.appendChild(dlg);
+        dlg.showModal();
+    });
+}
+
+async function confirm_dlg(info) {
+    return new Promise((resolver) => {
+        let html = `<dialog class="confirm_dlg">
+            <div style="font-weight: bold;white-space:pre-wrap;">${info}</div>
+            <div class="btn_box">
+                <button class="btn btnok">確定</button>
+                <button class="btn btncancel">取消</button>
+            </div>
+            </dialog>`;
+        let tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        let dlg = tmp.children[0];
+        async function _ok() {
+            dlg.remove();
+            resolver(true);
+        }
+        function _cancel() {
+            dlg.remove();
+            resolver(false);
+        }
+        dlg.querySelector(".btnok").onclick = _ok;
+        dlg.querySelector(".btncancel").onclick = _cancel;
+        dlg.onclose = _cancel;
+        document.body.appendChild(dlg);
+        dlg.showModal();
+    });
+}
+
+async function prompt_dlg(info = "", def_val = "") {
+    return new Promise((resolver) => {
+        let html = `<dialog class="prompt_dlg">
+            <div style="font-weight: bold">${info}</div>
+            <div><input type="text" id="answer" size="50" autofocus /></div>
+            <div class="btn_box">
+                <button class="btn btnok">確定</button>
+                <button class="btn btncancel">取消</button>
+            </div>
+            </dialog>`;
+        let tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        let dlg = tmp.children[0];
+        let elm_answer = dlg.querySelector("#answer");
+        if (def_val) {
+            elm_answer.value = def_val;
+        }
+        async function _ok() {
+            let answer = elm_answer.value;
+            dlg.remove();
+            resolver(answer.trim());
+        }
+        function _cancel() {
+            dlg.remove();
+            resolver();
+        }
+        dlg.querySelector(".btnok").onclick = _ok;
+        elm_answer.onkeydown = (evt) => {
+            if (evt.key == "Enter") {
+                evt.preventDefault();
+                evt.stopPropagation();
+                _ok();
+                return;
+            }
+        }
+        dlg.querySelector(".btncancel").onclick = _cancel;
+        dlg.onclose = _cancel;
+        document.body.appendChild(dlg);
+        dlg.showModal();
+    });
+};
+
+async function get_name_dlg(info, def_val = "", check_filename=true, allow_empty = false) {
+    return new Promise((resolver) => {
+        let html = `<dialog class="name_dlg">
+            <div style="font-weight: bold">${info || "請輸入："}</div>
+            <div><input type="text" id="name" size="50" autofocus /></div>
+            <div class="btn_box">
+                <button class="btn btnok">確定</button>
+                <button class="btn btncancel">取消</button>
+            </div>
+            </dialog>`;
+        let tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        let dlg = tmp.children[0];
+        let elm_name = dlg.querySelector("#name");
+        if (def_val) {
+            elm_name.value = def_val;
+        }
+        async function _ok() {
+            let name = elm_name.value;
+            if (!name && !allow_empty) {
+                // alert("不能為空！");
+                await alert_dlg("不能為空！");
+                elm_name.focus();
+                return;
+            }
+            if (check_filename && name.search(/[\*\?\\\/\:\"\<\>\|]/) >= 0) {
+                // alert(`名字中不能包含 \* \? \\ \/ \: \" \< \> \|`);
+                await alert_dlg(`名字中不能包含 \* \? \\ \/ \: \" \< \> \|`);
+                elm_name.focus();
+                return;
+            }
+            dlg.remove();
+            resolver(name.trim());
+        }
+        function _cancel() {
+            dlg.remove();
+            resolver();
+        }
+        dlg.querySelector(".btnok").onclick = _ok;
+        elm_name.onkeydown = (evt) => {
+            if (evt.key == "Enter") {
+                evt.preventDefault();
+                evt.stopPropagation();
+                _ok();
+                return;
+            }
+        }
+        dlg.querySelector(".btncancel").onclick = _cancel;
+        dlg.onclose = _cancel;
+        document.body.appendChild(dlg);
+        dlg.showModal();
+    });
+};
+
+function select_group_dlg() {
+    return new Promise((resolver) => {
+        let grps = ['<option value="" style="background-color: var(--c1);">未分組</option>'];
+        for (const g in Keymap.Groups) {
+            grps.push(`<option value="${g}" style="background-color: ${Keymap.getGroupColor(g)}">${Keymap.getGroupAlias(g)}</option>`);
+        }
+        let html = `<dialog class="select_group_dlg">
+            <div style="font-weight: bold;">請選擇分組：
+                <select style="width: fit-content;background-color: var(--c1);cursor: pointer;">${grps.join("")}</select>
+            </div>
+            <div class="btn_box">
+                <button class="btn btnok">確定</button>
+                <button class="btn btncancel">取消</button>
+            </div>
+            </dialog>`;
+        let tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        let dlg = tmp.children[0];
+        function _ok() {
+            dlg.remove();
+            resolver(dlg.querySelector("select").value.trim());
+        }
+        function _cancel() {
+            dlg.remove();
+            resolver();
+        }
+        dlg.querySelector(".btnok").onclick = _ok;
+        dlg.querySelector(".btncancel").onclick = _cancel;
+        dlg.onclose = _cancel;
+        document.body.appendChild(dlg);
+        dlg.showModal();
+    });
+};
+
+async function setmapping_dlg(combo_str) {
+    let cks = Util.split_combo(combo_str);
+    let mk = cks.pop();
+    function setmapping_dlg_reset(dlg) {
+        for (const elm of dlg.querySelectorAll('input[type="checkbox"]')) {
+            elm.checked = false;
+        }
+        dlg.querySelector("#group").value = "";
+        dlg.querySelector("#st_mapping").value = "";
+    }
+    function setmapping_dlg_load(dlg) {
+        let st_mods = dlg.querySelector("#st_mods");
+        let selGrp = dlg.querySelector("#group");
+        let kn = [];
+        for (const e of st_mods.querySelectorAll('input[type="checkbox"]:checked')) {
+            kn.push(e.value);
+        }
+        kn.sort();
+        kn.push(mk);
+        let mi = Keymap.getMapping(kn.join("+"));
+        dlg.querySelector("#is_main").checked = mi.is_main;
+        selGrp.value = mi.group;
+        selGrp.style.backgroundColor = Keymap.getGroupColor(mi.group);
+        let m = dlg.querySelector("#st_mapping");
+        m.value = (mi.text || "").trim();
+        m.focus();
+    }
+    function setmapping_dlg_save(dlg) {
+        if (!dlg.querySelector("#st_mapping").value.trim())
+            return;
+        let kn = [];
+        for (const e of dlg.querySelectorAll('#st_mods input[type="checkbox"]:checked')) {
+            kn.push(e.value);
+        }
+        kn.sort();
+        kn.push(mk);
+        Keymap.setMapping(
+            kn.join("+"),
+            Keymap.packMappingInfo(
+                dlg.querySelector("#st_mapping").value.trim(),
+                dlg.querySelector("#is_main").checked,
+                dlg.querySelector("#group").value
+            )
+        );
+        show_msg(dlg, `快捷鍵【 ${kn.join("+")} 】已保存`);
+    }
+    function show_msg(dlg, msg) {
+        let msgbox = dlg.querySelector(".message");
+        msgbox.innerHTML = msg;
+        msgbox.style.opacity = 1;
+        setTimeout(() => { msgbox.style.opacity = 0; }, 2000);
+    }
+    return new Promise((resolver) => {
+        let mods = [];
+        for (const k of Keymap.ModKeys) {
+            if (k != mk && Keymap.isKBKeys(k)) {
+                if (Keymap.ModKeyColorMode) {
+                    let clr = Keymap.getModColor(k) || ["transparent", "transparent"];
+                    mods.push(`<label style="white-space: nowrap;cursor: pointer;"><input type="checkbox" value="${k}" /><kn data-k="${k}" class="ck mod_color" style="${clr[0]?'--mod-c1:'+clr[0]+';':''}${clr[1]?'--mod-c2:'+clr[1]+';':''}">${k}</kn></label>`)
+                } else {
+                    mods.push(`<label style="white-space: nowrap;cursor: pointer;"><input type="checkbox" value="${k}" /><kn data-k="${k}" class="ck">${k}</kn></label>`)
+                }
+            }
+        }
+        let grps = ['<option value="" style="background-color: var(--c1);">未分組</option>'];
+        for (const g in Keymap.Groups) {
+            grps.push(`<option value="${g}" style="background-color: ${Keymap.getGroupColor(g)}">${Keymap.getGroupAlias(g)}</option>`);
+        }
+        let html = `<dialog class="kmdlg" id="kmdlg">
+            <div style="flex: 1;display: flex;gap: 5px;">
+                <div id="st_mods" style="display:grid;grid-auto-flow:column;grid-template-rows:repeat(10, max-content);gap: 5px;width: fit-content;padding: 5px;background-color: #f0f0f0;">
+                    ${mods.join("")}
+                </div>
+                <div style="padding-top: 5px;">
+                +
+                <kn class="mk" style="grid-row: 1 / -1;">${mk}</kn>
+                </div>
+                <div style="flex:1;display:flex;flex-flow:column;">
+                    <textarea id="st_mapping" style="flex:1;border-width:1px;" autofocus placeholder="這裡輸入快捷鍵的說明信息。\n\n說明信息分為三部分：“簡介”，“詳細信息”和“備註”。\n“簡介”部分會直接顯示在鍵帽上，“簡介”和“詳細信息”會顯示在快捷鍵列表裡，“備註”只會在錄入界面顯示。\n--\n具體格式：\n簡介（可以是連續的多行文字）\n（一個空行）\n詳細信息\n--（連續多個“-”(英文減號)）\n備註信息"></textarea>
+                    <div style="margin-top: 5px;">
+                        <label style="position: relative;cursor: pointer;" data-help="將快捷鍵設定為“主快捷鍵”\n在鍵圖中，會在鍵帽上優先顯示主快捷鍵的信息\n在鍵表中，主快捷鍵的右上角會有一個“★”標記">
+                            <input type="checkbox" id="is_main">在鍵帽上優先顯示
+                        </label>
+                        <label style="margin-left:20px;float: right">
+                            分組
+                            <select id="group" style="width: 5rem;background-color: var(--c1);cursor: pointer;">${grps.join("")}</select>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div style="color: #666;">
+            
+            </div>
+            <div style="display: flex;gap: 5px;">
+                <button class="btn btnclr danger">清空本鍵所有快捷鍵</button>
+                <span class="message" style="flex: 1;text-align: center;"></span>
+                <button class="btn btndel danger">刪除</button>
+                <button class="btn btnok">保存</button>
+                <button class="btn btncancel">關閉</button>
+            </div>
+        </dialog>`;
+        let changed = false;
+        let tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        let dlg = tmp.children[0];
+        let ktable = Keymap.getLayoutKeyTable();
+        for (const kn of dlg.querySelectorAll("kn")) {
+            if (!(kn.innerText in ktable)) {
+                kn.classList.add("na");
+            }
+        }
+        let st_mods = dlg.querySelector("#st_mods");
+        let selGrp = dlg.querySelector("#group");
+        selGrp.onchange = (evt) => {
+            selGrp.style.backgroundColor = selGrp.options[selGrp.selectedIndex].style.backgroundColor;
+            changed = true;
+        }
+        dlg.querySelector("#is_main").onchange = (evt) => { changed = true; };
+        dlg.querySelector("#st_mapping").onchange = (evt) => { changed = true; };
+        st_mods.querySelectorAll('input[type="checkbox"]').forEach(elm => {
+            if (cks.includes(elm.value)) elm.checked = true;
+            elm.onclick = async (evt) => {
+                // if (changed && confirm("修改未保存，是否保存？")) {
+                if (changed && (await confirm_dlg("修改未保存，是否保存？"))) {
+                    elm.checked = !elm.checked;
+                    setmapping_dlg_save(dlg);
+                    elm.checked = !elm.checked;
+                }
+                setmapping_dlg_load(dlg);
+                changed = false;
+            }
+        });
+        dlg.querySelector(".btnok").onclick = (evt) => {
+            setmapping_dlg_save(dlg);
+            changed = false;
+        };
+        dlg.querySelector(".btndel").onclick = async (evt) => {
+            let kn = [];
+            for (const elm of st_mods.querySelectorAll('input[type="checkbox"]:checked')) {
+                kn.push(elm.value);
+            }
+            kn.sort();
+            kn.push(mk);
+            // if (!confirm(`確認要刪除快捷鍵【 ${kn.join("+")} 】？`)) return;
+            if (!(await confirm_dlg(`確認要刪除快捷鍵【 ${kn.join("+")} 】？`))) return;
+            // dlg.remove();
+            // resolver([kn.join("+"), ""]);
+            Keymap.setMapping(kn.join("+"), "");
+            setmapping_dlg_reset(dlg);
+            show_msg(dlg, `快捷鍵【 ${kn.join("+")} 】已刪除`);
+        };
+        dlg.querySelector(".btnclr").onclick = async (evt) => {
+            // if (!confirm(`確認要清空鍵【 ${mk} 】上的所有快捷鍵？`)) return;
+            if (!(await confirm_dlg(`確認要清空鍵【 ${mk} 】上的所有快捷鍵？`))) return;
+            // dlg.remove();
+            // resolver([]);
+            for (const k in Keymap.getAllMappings(mk)) {
+                Keymap.setMapping(k, "");
+            }
+            setmapping_dlg_reset(dlg);
+            show_msg(dlg, `鍵【 ${mk} 】上的所有快捷鍵已清空`);
+        };
+        dlg.querySelector(".btncancel").onclick = async (evt) => {
+            // if (changed && confirm("修改未保存，是否保存？")) {
+            if (changed && (await confirm_dlg("修改未保存，是否保存？"))) {
+                setmapping_dlg_save(dlg);
+            }
+            dlg.remove();
+            resolver();
+        };
+        dlg.onclose = async (evt) => {
+            // if (changed && confirm("修改未保存，是否保存？")) {
+            if (changed && (await confirm_dlg("修改未保存，是否保存？"))) {
+                setmapping_dlg_save(dlg);
+            }
+            dlg.remove();
+            resolver();
+        }
+        setmapping_dlg_load(dlg);
+        document.body.appendChild(dlg);
+        dlg.showModal();
+    });
+}
+
+async function setting_dlg() {
+    return new Promise((resolver) => {
+        let cfg = Keymap.Config;
+        let html = `<dialog class="stdlg">
+            <div class="sts">
+                <div class="subttl">鍵譜設置</div>
+                <span>主鍵盤大小</span>
+                <select id="kbsize" style="width: 4rem;">
+                    <option value="0">隱藏</option>
+                    <option value="1">60%</option>
+                    <option value="2">80%</option>
+                    <option value="3">標準</option>
+                </select>
+                <label style="grid-column: span 2;"><input type="checkbox" id="kbext" />顯示擴展鍵盤</label>
+                <span>鍵盤層數</span><input type="number" id="layers" min="1" step="1" style="width: 3rem;" />
+                <label style="grid-column: span 2;"><input type="checkbox" id="showall" />顯示不屬於當前鍵盤佈局的按鍵</label>
+                <span>擴展鍵盤</span><textarea id="extkeys" style="white-space: nowrap;grid-column: 2 / -1;"></textarea>
+                <span>分組</span><textarea id="groups" style="grid-column: 2 / -1;"></textarea>
+                <!--<span>鍵表列數</span><input type="number" id="cols" min="1" max="10" step="1" style="width: 3rem;" />-->
+                <label style="grid-column: 2 / -1;"><input type="checkbox" id="list_by" />鍵表按分組顯示</label>
+                <label style="grid-column: 2;"><input type="checkbox" id="show_comment" />顯示備註</label>
+                <span>備註文字大小</span><input type="number" id="comment-font-size" min="0.1" max="10" step="0.05" style="width: 3rem;" />
+                <div class="subttl"></div>
+                <div id="demo" data-kbhint="true" style="grid-column: 1 / -1;display:flex;gap:10px;align-items:center;justify-content:center;">
+                    <keyboard>
+                        <k style="display:inline-block;height:calc(1rem * var(--kh1));width:calc(1rem * var(--kw1));cursor:default;">
+                            <div class="ktn" style="display:block !important;text-align:right;font-size:calc(1rem * var(--ks1));">K</div>
+                        </k>
+                        <k class="set group" style="display:inline-block;height:calc(1rem * var(--kh1));width:calc(1rem * var(--kw1));cursor:default;">
+                            <div class="ktn" style="display:block !important;text-align:right;font-size:calc(1rem * var(--ks1));">K</div>
+                        </k>
+                        <k class="set group" style="display:inline-flex;height:calc(1rem * var(--kh2));width:calc(1rem * var(--kw2));cursor:default;">
+                            <div class="ktr" style="display:grid;flex:1;">
+                                <div class="modkeys"><div class="mod mod_color mod_raw" style="--mod-c1:#00c853;--mod-c2:#00c853;--mod-cs:calc(1rem * var(--mod-cs2));--mod-ds:calc(1rem * var(--mod-ds2));">Ctrl</div></div>
+                                <div class="mk" style="display:inline-block;font-size:calc(1rem * var(--ks2));">K</div>
+                                <div class="cnt">+1</div>
+                            </div>
+                            <div class="ktm" style="display:unset;font-size:calc(1rem * var(--kt2));">快捷鍵信息</div>
+                        </k>
+                    </keyboard>
+                </div>
+                <div class="subttl">鍵盤配色</div>
+                <span>鍵盤底色</span><input type="text" id="kb-bgc" style="width: 6rem;" />
+                <span>鍵盤邊框</span><input type="text" id="kb-bdc" style="width: 6rem;" />
+                <span>默認鍵帽色</span><input type="text" id="c4" style="width: 6rem;" />
+                <span>默認字符色</span><input type="text" id="c3" style="width: 6rem;" />
+                <span>高亮鍵帽色</span><input type="text" id="c1" style="width: 6rem;" />
+                <span>高亮字符色</span><input type="text" id="c0" style="width: 6rem;" />
+                <!--<span>高亮鍵帽邊框</span><input type="text" id="c2" style="width: 6rem;" />-->
+                <div class="subttl">鍵帽標準模式</div>
+                <span>鍵帽寬</span><input type="number" id="kw1" min="0.1" max="10" step="0.1" style="width: 3rem;" />
+                <span>鍵帽高</span><input type="number" id="kh1" min="0.1" max="10" step="0.1" style="width: 3rem;" />
+                <span>鍵名字符大小</span><input type="number" id="ks1" min="0.1" max="10" step="0.05" style="width: 3rem;grid-column: 6 / -1" />
+                <div class="subttl">鍵帽提示模式</div>
+                <span>鍵帽寬</span><input type="number" id="kw2" min="0.1" max="10" step="0.1" style="width: 3rem;" />
+                <span>鍵帽高</span><input type="number" id="kh2" min="0.1" max="10" step="0.1" style="width: 3rem;" />
+                <span>鍵名字符大小</span><input type="number" id="ks2" min="0.1" max="10" step="0.05" style="width: 3rem;" />
+                <span>信息文字大小</span><input type="number" id="kt2" min="0.1" max="10" step="0.05" style="width: 3rem;" />
+                <label style="grid-column: 2 / span 2;"><input type="checkbox" id="show_cnt" />顯示快捷鍵數量提示</label>
+                <div class="subttl">修飾鍵</div>
+                <span>自定義鍵</span><input type="text" id="modkeys" style="grid-column: 2 / -1;" />
+                <span>鍵帽顯示</span>
+                <select id="modkey_mode" style="width: 4rem;">
+                    <option value="raw">鍵名</option>
+                    <option value="chr">縮寫</option>
+                    <option value="dot">顏色塊</option>
+                </select>
+                <span>字符大小</span><input type="number" id="mod-cs2" min="0.1" max="10" step="0.05" style="width: 3rem;" />
+                <span>顏色塊大小</span><input type="number" id="mod-ds2" min="0.1" max="10" step="0.05" style="width: 3rem;grid-column: 6 / -1;" />
+                <span>縮寫</span><textarea id="modkey_chars" style="grid-column: 2 / -1;"></textarea>
+                <span>顏色</span><textarea id="modkey_colors" style="grid-column: 2 / -1;"></textarea>
+                <label style="grid-column: 2 / span 2;"><input type="checkbox" id="modkey_clr" />在鍵圖中啟用顏色</label>
+                <label style="grid-column: span 2;"><input type="checkbox" id="modkey_clr_list" />在鍵表中啟用顏色</label>
+            </div>
+            <div style="text-align: right;">
+                <button class="btn btnclr danger" style="float:left;">Reset</button>
+                <button class="btn btnok">確定</button>
+                <button class="btn btncancel">取消</button>
+            </div>
+            </dialog>`;
+        let tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        let dlg = tmp.children[0];
+        // init demo
+        let demo = dlg.querySelector("#demo");
+        let mkey = demo.querySelector(".modkeys>div");
+        mkey.className=`mod ${cfg["modkey_clr"]?"mod_color":""}`;
+        switch (cfg["modkey_mode"]) {
+            case "raw":
+                mkey.innerText="Ctrl";
+                mkey.classList.add("mod_raw");
+                break;
+            case "chr":
+                mkey.innerText="C";
+                mkey.classList.add("mod_chr");
+                break;
+            case "dot":
+                mkey.innerText="";
+                mkey.classList.add("mod_dot");
+                break;
+        }
+        for (const c of dlg.querySelectorAll("input,textarea,select")) {
+            c.onchange = (evt) => {
+                switch (c.id) {
+                    case "modkey_clr":
+                        if (c.checked) {
+                            mkey.classList.add("mod_color");
+                        } else {
+                            mkey.classList.remove("mod_color")
+                        }
+                        break;
+                    case "modkey_mode":
+                        mkey.classList.remove("mod_raw", "mod_chr", "mod_dot");
+                        switch (c.value) {
+                            case "raw":
+                                mkey.innerText="Ctrl";
+                                mkey.classList.add("mod_raw");
+                                break;
+                            case "chr":
+                                mkey.innerText="C";
+                                mkey.classList.add("mod_chr");
+                                break;
+                            case "dot":
+                                mkey.innerText="";
+                                mkey.classList.add("mod_dot");
+                                break;
+                        }
+                        break;
+                    default:
+                        demo.style.setProperty("--"+c.id, c.value);
+                }
+            }
+            switch (c.id) {
+                case "kbsize":
+                    c.value = Keymap.KBSize;
+                    break;
+                case "extkeys":
+                    c.value = cfg.extkeys.join(",").replaceAll("__CR/LF__,", "\n").replaceAll("__CR/LF__", "\n");
+                    break;
+                case "modkeys":
+                    c.value = cfg.modkeys.join(", ");
+                    break;
+                case "kbext":
+                    c.checked = cfg.kbext;
+                    break;
+                case "modkey_colors": {
+                    let l = [];
+                    for (const mk in cfg.modkey_colors) {
+                        if (cfg.modkey_colors[mk])
+                            l.push(mk+"::"+cfg.modkey_colors[mk]);
+                    }
+                    c.value = l.join(", ");
+                    break;
+                }
+                case "modkey_chars": {
+                    let l = [];
+                    for (const mk in cfg.modkey_chars) {
+                        if (cfg.modkey_chars[mk])
+                            l.push(mk+"::"+cfg.modkey_chars[mk]);
+                    }
+                    c.value = l.join(", ");
+                    break;
+                }
+                case "modkey_clr":
+                    c.checked = cfg.modkey_clr;
+                    break;
+                case "modkey_clr_list":
+                    c.checked = cfg.modkey_clr_list;
+                    break;
+                case "groups": {
+                    let l = [];
+                    for (const gn in cfg.groups) {
+                        if (gn)
+                            l.push(gn+"::"+cfg.groups[gn].join("::"));
+                    }
+                    c.value = l.join(", ");
+                    break;
+                }
+                case "show_comment":
+                    c.checked = cfg.show_comment;
+                    break;
+                case "showall":
+                    c.checked = cfg.showall;
+                    break;
+                case "show_cnt":
+                    c.checked = cfg.show_cnt;
+                    break;
+                case "list_by":
+                    c.checked = (cfg.list_by == "group");
+                    break;
+                default:
+                    c.value = cfg[c.id];
+            }
+        }
+        dlg.querySelector(".btnok").onclick = (evt) => {
+            for (const c of dlg.querySelectorAll("input,textarea,select")) {
+                switch (c.id) {
+                    case "extkeys":
+                        cfg.extkeys = [];
+                        for (const l of c.value.trim().split("\n")) {
+                            if (l.trim()) {
+                                let n = 0;
+                                for (const xk of l.split(/\s*,\s*/)) {
+                                    if (xk) {
+                                        cfg.extkeys.push(xk);
+                                        n ++;
+                                    }
+                                }
+                                if (n) {
+                                    cfg.extkeys.push("__CR/LF__");
+                                }
+                            }
+                        }
+                        while (cfg.extkeys[cfg.extkeys.length - 1] == "__CR/LF__") {
+                            cfg.extkeys.pop();
+                        }
+                        break;
+                    case "kbsize":
+                        Keymap.KBSize = parseInt(c.value);
+                        break;
+                    case "modkeys":
+                        if (c.value.trim())
+                            Keymap.ModKeys = c.value.trim().split(/\s*,\s*/);
+                        else
+                            Keymap.ModKeys = null;
+                        break;
+                    case "kbext":
+                        cfg.kbext = c.checked;
+                        break;
+                    case "modkey_colors":
+                        cfg.modkey_colors = {};
+                        for (const m of c.value.trim().split(/\s*,\s*/)) {
+                            let mm = m.split("::", 2);
+                            if (mm[1]) {
+                                cfg.modkey_colors[mm[0]] = mm[1];
+                            }
+                        }
+                        break;
+                    case "modkey_chars":
+                        cfg.modkey_chars = {};
+                        for (const m of c.value.trim().split(/\s*,\s*/)) {
+                            let mm = m.split("::", 2);
+                            if (mm[1]) {
+                                cfg.modkey_chars[mm[0]] = mm[1];
+                            }
+                        }
+                        break;
+                    case "modkey_mode":
+                        cfg.modkey_mode = c.value;
+                        break;
+                    case "modkey_clr":
+                        cfg.modkey_clr = c.checked;
+                        break;
+                    case "modkey_clr_list":
+                        cfg.modkey_clr_list = c.checked;
+                        break;
+                    case "groups":
+                        cfg.groups = {};
+                        for (const g of c.value.trim().split(/\s*,\s*/)) {
+                            let gg = g.split("::", 3);
+                            if (gg[0])
+                                cfg.groups[gg[0]] = [gg[1] || "", gg[2] || ""];
+                        }
+                        break;
+                    case "show_comment":
+                        cfg.show_comment = c.checked;
+                        break;
+                    case "showall":
+                        cfg.showall = c.checked;
+                        break;
+                    case "show_cnt":
+                        cfg.show_cnt = c.checked;
+                        break;
+                    case "list_by":
+                        cfg.list_by = c.checked ? "group" : "key";
+                        break;
+                    default:
+                        cfg[c.id] = c.value;
+                }
+            }
+            dlg.remove();
+            resolver(true);
+        };
+        dlg.querySelector(".btnclr").onclick = async (evt) => {
+            // if (!confirm(`確認要清空所有設置？`)) return;
+            if (!(await confirm_dlg(`確認要清空所有設置？`))) return;
+            Keymap.resetConfig();
+            dlg.remove();
+            resolver(true);
+        };
+        dlg.querySelector(".btncancel").onclick = (evt) => {
+            dlg.remove();
+            resolver();
+        };
+        dlg.onclose = (evt) => {
+            dlg.remove();
+            resolver();
+        }
+        document.body.appendChild(dlg);
+        dlg.showModal();
+    })
+};
+
+// Convert to img
+async function printAsPng(imgScale, imgName) {
+    if (!("html2canvas" in window)) {
+        // alert("截圖功能不可用！可能缺失 'js/html2canvas.js' 文件。");
+        await alert_dlg("截圖功能不可用！可能缺失 'js/html2canvas.js' 文件。");
+        return;
+    }
+    // change uimode to 'single'
+    Util.setFlag('ui', 'single');
+    //hide button
+    document.getElementById("btn_save_as_img").style.visibility = "hidden";
+    html2canvas(document.body, {
+        backgroundColor: null,
+        scale: imgScale,
+        windowWidth: document.body.style.width,
+        windowHeight: document.body.style.height,
+        removeContainer: true
+    }).then(canvas => {
+        if (UI.LaunchMode == "exe" || !("saveAs" in window)) {
+            let h=canvas.height/2, w=canvas.width/2, s=1;
+            if (h > (window.innerHeight-100) || w > (window.innerWidth-100)) {
+                s = Math.min((window.innerHeight-100)/h, (window.innerWidth-100)/w);
+            }
+            canvas.style.height=h*s;
+            canvas.style.width=w*s;
+            let dlg=document.createElement("dialog");
+            dlg.style.marginTop="auto";
+            dlg.style.marginLeft="auto";
+            dlg.style.transform="unset";
+            dlg.innerHTML=`<div style="position:absolute;top:0px;right:0px;margin:10px;font-size:1.5rem;background-color:var(--ui-bgc);border-width:2px;outline:3px solid white;" class="btn rnd close">&times;</div>
+            <div style="pointer-events:none;position:absolute;top:50px;left:0px;margin:12px;font-size:1.5rem;padding:10px;color:red;background-color:rgba(255,255,255,0.6);border:2px dashed red;border-radius:10px;box-shadow:0px 0px 10px;">右鍵點擊，選擇“將鏈接另存為/Save link as”</div>
+            <div><a href="${canvas.toDataURL()}" download="${imgName}" style="cursor:default;"></a></div>`;
+            let a = dlg.querySelector("a");
+            a.onclick=(evt) => {evt.preventDefault();evt.stopImmediatePropagation()};
+            a.oncontextmenu=(evt) => {evt.stopImmediatePropagation();};
+            a.appendChild(canvas);
+            dlg.querySelector(".close").onclick = () => {dlg.remove();};
+            dlg.onclose = () => {dlg.remove();};
+            document.body.appendChild(dlg);
+            dlg.showModal();
+        } else {
+            canvas.toBlob(blob => { saveAs(blob, imgName); });
+        }
+    });
+    //show button
+    document.getElementById("btn_save_as_img").style.visibility = "visible";
+    // recover uimode
+    Util.setFlag('ui', Keymap.Config.uimode);
+}
+// open file
+async function openFile() {
+    return new Promise((resolver) => {
+        let fileSelector = document.createElement("input");
+        fileSelector.setAttribute("type", "file");
+        fileSelector.setAttribute("accept", ".keymap");
+        fileSelector.setAttribute("multiple", true);
+        fileSelector.click();
+        // get the selected filepath
+        fileSelector.onchange = async function() {
+            resolver(this.files);
+        };
+        fileSelector.remove();
+    });
+}
+// save keymap to file
+function saveKeymapFile() {
+    let blob = new Blob([Keymap.JSON], { type: "application/json;charset=utf-8" });
+    saveFile(blob, Keymap.Name.replace(/[\*\?\\\/\:\"\<\>\|]/, "_") + ".keymap");
+}
+
+// save file
+function saveFile(blob, filename) {
+    if (UI.LaunchMode == "exe" || !("saveAs" in window)) {
+        let dlg=document.createElement("dialog");
+        dlg.onclose=()=>{dlg.remove();};
+        let fname=filename.replace(/[\*\?\\\/\:\"\<\>\|]/, "_");
+        dlg.innerHTML=`<div style="position:absolute;top:0px;right:0px;margin:10px;font-size:1rem;outline:2px solid white;" class="btn rnd close">&times;</div>
+        <div style="font-weight:bold;">保存文件</div>
+            <div style="padding:10px;">
+            <a href="${window.URL.createObjectURL(blob)}" download="${fname}" class="btn rnd">${fname}</a> &lt;- 右鍵點擊，選擇“將鏈接另存為/Save link as”
+            </div>`;
+        let a = dlg.querySelector("a");
+        a.onclick=(evt) => {evt.preventDefault();evt.stopImmediatePropagation();};
+        a.oncontextmenu=(evt) => {evt.stopImmediatePropagation();};
+        dlg.querySelector(".close").onclick = () => {dlg.remove();};
+        document.body.appendChild(dlg);
+        dlg.showModal();
+    } else {
+        saveAs(blob, filename.replace(/[\*\?\\\/\:\"\<\>\|]/, "_"));
+        // let fileSaver = document.createElement("a");
+        // fileSaver.href = window.URL.createObjectURL(blob);
+        // fileSaver.target = "_blank";
+        // fileSaver.download = Keymap.Name.replace(/[\*\?\\\/\:\"\<\>\|]/, "_") + ".keymap";
+        // fileSaver.click();
+        // fileSaver.remove();
+    }
+}
+
+// IO layer: browser storage
+var _PROFILE_ = {
+    _setting: "_keymap.setting",
+
+    async read(prof) {
+        if (prof)
+            return localStorage.getItem(prof + ".keymap") || "";
+        else {
+            console.warn("Error! Empty profile name.");
+            return "";
+        }
+    },
+    async write(prof, data) {
+        if (prof)
+            localStorage.setItem(prof + ".keymap", data);
+        else
+            console.warn("Error! Empty profile name.");
+    },
+    async del(prof){
+        if (prof)
+            localStorage.removeItem(prof + ".keymap");
+        else
+            console.warn("Error! Empty profile name.");
+    },
+    async all() {
+        let s = [];
+        for (const k in localStorage) {
+            if (k.endsWith(".keymap")) {
+                s.push(k.slice(0, -7));
+            }
+        }
+        s.sort((a, b) => a.localeCompare(b, "zh"));
+        return s;
+    },
+    async setLast(prof) {
+        localStorage.setItem("_last", prof || "");
+    },
+    async getLast() {
+        return localStorage.getItem("_last") || "";
+    },
+    async isExist(prof) {
+        return ((prof + ".keymap") in localStorage);
+    },
+    async readSetting() {
+        return localStorage.getItem(this._setting) || "";
+    },
+    async writeSetting(s) {
+        localStorage.setItem(this._setting, s);
+    },
+};
+
+// If run by webwin, enable local-file profiles.
+async function webwin_init() {
+    // IO layer: webwin fs
+    window._PROFILE_ = {
+        _data_fdr: "data",
+        _setting_file: "_keymap.setting",
+
+        _datafile(filename) { return this._data_fdr + "\\" + filename; },
+        _keymapfile(prof) { return this._datafile(prof + ".keymap"); },
+
+        async read(prof) {
+            try {
+                return await webwin.fs.readfile(this._keymapfile(prof), "utf-8");
+            } catch (e) {
+                console.log(e);
+                return "";
+            }
+        },
+        async write(prof, data) {
+            try {
+                await webwin.fs.writefile(this._keymapfile(prof), data, "w", "utf-8");
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        async del(prof) {
+            try {
+                await webwin.fs.removefile(this._keymapfile(prof));
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        async all() {
+            try {
+                let s = [];
+                (await webwin.fs.ls(this._data_fdr, "*.keymap", "file")).forEach(p => {
+                    s.push(p.name.slice(0, -7));
+                });
+                s.sort((a, b) => a.localeCompare(b, "zh"));
+                return s;
+            } catch (e) {
+                console.log(e);
+                return [];
+            }
+        },
+        async setLast(prof) {
+            try {
+                await webwin.fs.writefile(this._datafile("_last"), prof || "", "w", "utf-8");
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        async getLast() {
+            try {
+                return await webwin.fs.readfile(this._datafile("_last"), "utf-8");
+            } catch (e) {
+                console.log(e);
+                return "";
+            }
+        },
+        async isExist(prof) {
+            try {
+                return (await webwin.fs.ls(this._data_fdr, prof + ".keymap", "file").length == 1);
+            } catch (e) {
+                console.log(e);
+                return false;
+            }
+        },
+        async readSetting() {
+            try {
+                return await webwin.fs.readfile(this._datafile(this._setting_file), "utf-8");
+            } catch (e) {
+                console.log(e);
+                return "";
+            }
+        },
+        async writeSetting(s) {
+            try {
+                await webwin.fs.writefile(this._datafile(this._setting_file), s || "", "w", "utf-8");
+            } catch (e) {
+                console.log(e);
+            }
+        },
+    }
+    __loader__ = "【精裝禮盒版 *^____^* 】";
+    UI.LaunchMode = "exe";
+    await __init__();
+};
+window.on_webwin_loaded = webwin_init;
+
+var __appname__ = "";
+var __version__ = "";
+var __homepage__ = "https://github.com/cataerogong/keymap";
+var __loader__ = "";
+
+async function __init__() {
+    Keymap._version = __version__;
+    document.title = `${__appname__} ${__loader__}`.trim();
+    document.querySelector(".about").innerHTML = `${__appname__} ${__version__} ${__loader__} `;
+    await Setting.load();
+    await UI.init();
+}
+
+__init__();
+
+</script>
+<!-- Img convert libraries -->
+<script src="js/html2canvas.js"></script>
+<script src="js/FileSaver.min.js"></script>
+<script>
+if (!("html2canvas" in window)) {
+    UI.elm("#btn_save_as_img").style.display = "none";
+}
+</script>
+<script src="custom.js"></script>
+<script src="present.js"></script>
+</body>
+</html>
